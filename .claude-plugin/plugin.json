@@ -1,0 +1,13 @@
+{
+  "name": "narrador",
+  "description": "Lê seus arquivos em voz alta e transforma um assunto em vídeo-aula: slides e diagramas que acendem no instante exato da fala, publicados como página. Voz pela ElevenLabs.",
+  "author": { "name": "William Alves" },
+  "license": "MIT",
+  "keywords": [
+    "text-to-speech",
+    "elevenlabs",
+    "narracao",
+    "video-aula",
+    "acessibilidade"
+  ]
+}

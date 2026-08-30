@@ -1,0 +1,14 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "narrador-marketplace",
+  "description": "narrador — leitura em voz alta e vídeo-aulas narradas para o Claude Code",
+  "owner": { "name": "William Alves" },
+  "plugins": [
+    {
+      "name": "narrador",
+      "description": "/narrador:ler-em-voz-alta narra um arquivo ou trecho com a sua voz na ElevenLabs. /narrador:video-aula gera uma aula com slides e diagramas sincronizados com a fala.",
+      "source": "./",
+      "category": "productivity"
+    }
+  ]
+}
