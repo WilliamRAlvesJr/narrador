@@ -93,7 +93,7 @@ def podar(itens: list[dict]) -> list[dict]:
 
 
 def recentes(quantos: int = 20) -> list[dict]:
-    """Do mais recente para o mais antigo, que e a ordem em que se procura."""
+    """Do mais recente para o mais antigo."""
     return list(reversed(ler()))[:max(1, quantos)]
 
 
@@ -106,7 +106,7 @@ def item(posicao: int) -> dict | None:
 
 
 def formatar(itens: list[dict]) -> str:
-    """A listagem que o usuario le: numero, quando, duracao e de onde veio."""
+    """Numero, quando, duracao e origem, uma narracao por linha."""
     if not itens:
         return "Nenhuma narracao no historico ainda."
     linhas = []

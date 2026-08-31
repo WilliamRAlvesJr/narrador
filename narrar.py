@@ -2,19 +2,19 @@
 """Liga e desliga a narracao automatica das respostas do Claude.
 
 O interruptor e um arquivo sentinela na pasta de dados, lido pelo hook
-SessionStart: por isso a mudanca so vale na proxima sessao. Onde esse arquivo
-fica e decisao do config.py, nunca deste script.
+SessionStart. Onde esse arquivo fica e decisao do config.py, nunca deste script.
 
-A instrucao que o Claude segue quando a narracao esta ligada mora aqui, e nao
-no hook, porque dois caminhos precisam dela: o hook, no inicio da sessao, e a
-skill narrar-respostas, que liga no meio da sessao e imprime o mesmo texto com
---instrucao. Uma fonte so evita as duas versoes divergirem.
+A sentinela sozinha decide as proximas sessoes; a que esta em andamento muda
+porque `on` e `off` imprimem tambem o texto que passa a valer, e a skill manda o
+Claude segui-lo. Esse texto mora aqui, e nao no hook, porque os dois caminhos
+precisam do mesmo: uma fonte so evita versoes divergentes.
 
-Uso: python narrar.py [on|off|--instrucao]
+Uso: python narrar.py [on|off]
 """
 
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 
@@ -30,9 +30,10 @@ INSTRUCAO = """\
 Ao terminar uma resposta de substância, narre-a como último passo do turno:
 
 1. Escreva um roteiro falado num arquivo .md temporário (use o scratchpad da sessão).
-2. Rode, com timeout de 600 s:
+2. Rode **em segundo plano** (run_in_background), nunca no turno:
    python "{speak}" "<o arquivo do roteiro>"
-   O comando só retorna quando o áudio acaba; não o interrompa achando que travou.
+   Assim a narração vira uma tarefa que o usuário encerra quando quiser, e o
+   turno não fica preso pelo tempo do áudio. Encerrar a tarefa corta o som.
 
 O roteiro não é a resposta: é o que sobra dela quando só existe o ouvido. Prosa
 corrida, uma ideia por frase, no máximo uns 900 caracteres. Fora caminho de
@@ -66,14 +67,22 @@ def estado() -> str:
 
 
 def ligar() -> int:
+    """Liga, e imprime de uma vez tudo o que quem chamou precisa saber."""
+    config.carregar_env()
+    if not os.environ.get("ELEVENLABS_API_KEY", "").strip():
+        print("Narracao automatica NAO ligada: falta a chave da ElevenLabs.")
+        print(config.instrucao_da_chave(), file=sys.stderr)
+        return 1
+
     try:
         config.SENTINELA.parent.mkdir(parents=True, exist_ok=True)
         config.SENTINELA.touch()
     except OSError as err:
         print(f"Nao consegui criar {config.SENTINELA}: {err}", file=sys.stderr)
         return 1
-    print("Narracao automatica LIGADA a partir da proxima sessao do Claude Code.")
-    print("Para valer ja nesta sessao, rode: python narrar.py --instrucao")
+
+    print("Narracao automatica LIGADA.")
+    print(instrucao())
     return 0
 
 
@@ -104,10 +113,6 @@ def main() -> int:
         return ligar()
     if acao == "off":
         return desligar()
-    if acao == "--instrucao":
-        print(instrucao())
-        return 0
-
     print(f"Argumento desconhecido: {argumentos[0]}\n{USO}", file=sys.stderr)
     return 2
 

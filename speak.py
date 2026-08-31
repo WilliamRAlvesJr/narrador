@@ -49,11 +49,9 @@ def load_dotenv() -> None:
 
 
 def ler_velocidade(valor: str | float | None) -> float:
-    """Converte e valida a velocidade da fala, venha ela do .env ou da flag.
+    """Converte e valida a velocidade, venha ela do .env ou da flag.
 
-    Fora da faixa a API responde 422 depois de o texto inteiro ter sido enviado,
-    e um valor que nao e numero rebentava com traceback: os dois viram aqui uma
-    linha dizendo o que corrigir.
+    Fora da faixa a API so responde 422 depois de receber o texto inteiro.
     """
     if valor is None or valor == "":
         return 1.0
@@ -262,9 +260,7 @@ def sintetizar(text: str, voice: str, model: str, fmt: str, speed: float,
                usar_cache: bool = True) -> tuple[bytes, bool]:
     """A sintese com cache por conteudo. Devolve o audio e se ele veio do cache.
 
-    Reler o mesmo documento, ou repetir a leitura depois de trocar so o layout de
-    quem chama, nao gasta credito de novo. Cache que nao pode ser escrito nao
-    interrompe a narracao: o audio ja esta em maos.
+    Cache que nao pode ser escrito nao interrompe a narracao.
     """
     if not usar_cache:
         return synthesize(text, voice, model, fmt, speed, language, prev, nxt), False
@@ -289,14 +285,11 @@ def sintetizar(text: str, voice: str, model: str, fmt: str, speed: float,
 def emendar(partes: list[bytes], fmt: str) -> bytes:
     """Junta os trechos num arquivo so, sem os cabecalhos que sobram no meio.
 
-    Cada resposta da API e um MP3 completo: tag ID3 e um frame Xing declarando a
-    duracao daquele trecho. Concatenados crus, o player le o Xing do primeiro e
-    acredita que o arquivo inteiro dura o que aquele trecho durava, recusando
-    seek adiante. Limpos, sem Xing nenhum, a duracao sai do tamanho e do bitrate,
-    que e constante aqui.
-
-    Trecho unico fica como veio: o Xing dele ja descreve o arquivo certo. Formato
-    que nao e MP3 tambem passa direto, porque a limpeza le frames de MP3.
+    Cada resposta da API e um MP3 completo, e o player adota o cabecalho do
+    primeiro trecho como duracao do arquivo inteiro. Sem eles, a duracao sai do
+    tamanho e do bitrate. Trecho unico passa intocado, porque o cabecalho dele ja
+    descreve o arquivo certo; formato que nao e MP3 tambem, porque a limpeza le
+    frames de MP3.
     """
     if len(partes) == 1 or not fmt.startswith("mp3"):
         return b"".join(partes)
@@ -339,18 +332,11 @@ def main() -> None:
     parser.add_argument("--no-play", action="store_true", help="apenas gera o arquivo")
     parser.add_argument("--sem-historico", action="store_true",
                         help="toca e apaga, sem deixar o audio no historico")
-    parser.add_argument("--controles", action=argparse.BooleanOptionalAction,
-                        default=None,
-                        help="teclado durante a reproducao (espaco pausa, setas "
-                             "pulam e mudam o volume, q encerra); o padrao e ligar "
-                             "so quando ha terminal")
     parser.add_argument("--historico", nargs="?", type=int, const=20, default=None,
                         metavar="N", help="lista as N ultimas narracoes (padrao 20)")
-    parser.add_argument("--replay", nargs="?", type=int, const=1, default=None,
-                        metavar="N", help="toca de novo a narracao N do historico "
-                                          "(1 = a ultima), sem chamar a API")
-    parser.add_argument("--parar", action="store_true",
-                        help="interrompe a narracao que estiver tocando agora")
+    parser.add_argument("--abrir", nargs="?", type=int, const=1, default=None,
+                        metavar="N", help="abre a narracao N do historico (1 = a "
+                                          "ultima) no player do sistema e sai")
     parser.add_argument("--no-cache", action="store_true",
                         help="sintetiza de novo mesmo que o trecho ja esteja em cache")
     parser.add_argument("--dry-run", action="store_true",
@@ -362,26 +348,20 @@ def main() -> None:
         list_voices()
         return
 
-    if args.parar:
-        arquivo = tocador.parar()
-        print(f"Narracao interrompida: {arquivo.name}" if arquivo
-              else "Nada tocando agora.")
-        return
-
     if args.historico is not None:
         print(historico.formatar(historico.recentes(args.historico)))
         return
 
-    if args.replay is not None:
-        anotado = historico.item(args.replay)
+    if args.abrir is not None:
+        anotado = historico.item(args.abrir)
         if not anotado:
             sys.exit("Nao existe narracao com esse numero. "
                      "Veja a lista com: speak.py --historico")
         caminho = Path(anotado["arquivo"])
         if not caminho.is_file():
             sys.exit(f"O audio de {anotado['quando']} ja saiu do disco.")
-        print(f"{anotado['quando']}  {anotado['origem']}")
-        tocador.tocar(caminho, args.controles)
+        tocador.abrir_no_sistema(caminho)
+        print(f"{anotado['quando']}  {anotado['origem']}  ->  {caminho}")
         return
 
     source = args.text if args.text is not None else args.source
@@ -462,7 +442,7 @@ def main() -> None:
         print(target)
         return
 
-    tocador.tocar(target, args.controles)
+    tocador.tocar(target)
     if args.sem_historico and not args.out:
         target.unlink(missing_ok=True)
     else:

@@ -1,6 +1,6 @@
 ---
 name: ler-em-voz-alta
-description: Narra um texto em áudio com a voz do usuário na ElevenLabs, e controla o áudio já gerado. Use quando ele pedir para ler em voz alta, narrar, falar, escutar, ouvir, "me lê isso", "lê pra mim" ou "gera o áudio disso", seja de um arquivo .md/.txt/.html, de um trecho colado, ou de um resumo que você mesmo escreveu; e também quando ele disser "para o áudio", "cala a boca", "toca de novo", "repete o áudio" ou perguntar o que já foi narrado.
+description: Narra um texto em áudio com a voz do usuário na ElevenLabs. Use quando ele pedir para ler em voz alta, narrar, falar, escutar, ouvir, "me lê isso", "lê pra mim" ou "gera o áudio disso", seja de um arquivo .md/.txt/.html, de um trecho colado, ou de um resumo que você mesmo escreveu; e quando perguntar o que já foi narrado. Para repetir um áudio antigo, a skill é replay.
 user-invocable: true
 ---
 
@@ -19,33 +19,35 @@ entre aspas: em algumas instalações ele contém espaços.
 
 Aceita `.md`, `.markdown`, `.txt`, `.html`, `.htm` (formato detectado pela extensão),
 texto literal, ou `-` para stdin. O script extrai o texto puro (remove tags HTML,
-blocos de código, links e marcação Markdown), quebra em chunks, sintetiza, toca e
-apaga o temporário.
+blocos de código, links e marcação Markdown), quebra em chunks, sintetiza, guarda
+o áudio e toca.
 
-O comando só retorna quando a narração termina: um `.md` de 2000 caracteres leva
-uns dois minutos. Chame com timeout folgado e não interrompa achando que travou.
+O comando só retorna quando a narração termina, e um `.md` de 2000 caracteres
+leva uns dois minutos: por isso ele nunca roda dentro do turno.
 
-## Enquanto toca, e depois
+## Rode sempre em segundo plano
 
-O áudio de cada narração fica guardado, então dá para atender a três pedidos sem
-gastar crédito nenhum:
+A narração vai para uma tarefa de segundo plano (`run_in_background`), nunca
+dentro do turno. São duas razões: o turno não fica preso pelos minutos de áudio,
+e a tarefa aparece na lista do Claude Code, onde o usuário a encerra sozinho
+quando quiser silêncio. Encerrar a tarefa derruba o player junto.
+
+Não existe pausar, avançar nem interromper por comando: quem para é ele, na
+tarefa.
+
+O áudio de cada narração fica guardado, e a lista do que já foi narrado sai com:
 
 ```powershell
-python "${CLAUDE_PLUGIN_ROOT}/speak.py" --parar        # corta o que está tocando
-python "${CLAUDE_PLUGIN_ROOT}/speak.py" --replay       # toca de novo a última
-python "${CLAUDE_PLUGIN_ROOT}/speak.py" --replay 3     # a terceira mais recente
-python "${CLAUDE_PLUGIN_ROOT}/speak.py" --historico    # lista as últimas narrações
+python "${CLAUDE_PLUGIN_ROOT}/speak.py" --historico
 ```
 
-**"Para", "chega", "cala a boca" durante uma narração é `--parar`**, e ele
-funciona mesmo que quem tenha começado o áudio tenha sido você, em outro turno.
-Rode antes de qualquer explicação: o usuário está falando por cima do som.
+Cada linha traz data, duração e origem.
 
-Para tocar de novo, nunca sintetize outra vez o mesmo texto: `--replay` pega o
-arquivo do histórico. E quando ele pedir uma narração longa e quiser controlar a
-reprodução com o teclado, diga que isso existe rodando o comando no terminal
-dele, porque pela sessão não há teclado: espaço pausa, as setas pulam 5 s e
-mudam o volume, q encerra.
+## Ouvir de novo
+
+Pedido de repetir um áudio já narrado é da skill `replay`, que lista as últimas e
+abre a escolhida no programa de áudio do computador. Não sintetize de novo o
+mesmo texto.
 
 ## Primeiro comando: cheque a configuração
 

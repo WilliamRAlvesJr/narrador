@@ -1,1 +1,30 @@
-<svg viewBox="0 0 560 300" role="img" aria-label="O áudio toca e some; guardar é opcional; erro não deixa arquivo em disco" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="24" y="112" width="116" height="60" rx="5"/><text x="82.0" y="147.0" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">mp3 pronto</text><g class="passo" data-passo="0"><line x1="140" y1="142" x2="206" y2="142"/><polygon points="206,142 198,137.5 198,146.5" fill="currentColor" stroke="none"/><text x="173.0" y="133" text-anchor="middle" font-size="11" fill="currentColor" stroke="none" opacity=".8">toca</text><rect x="206" y="104" width="132" height="76" rx="5"/><text x="272.0" y="138.0" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">player do sistema</text><text x="272.0" y="157.0" text-anchor="middle" font-size="11.5" fill="currentColor" stroke="none" opacity=".72">e some depois</text></g><g class="passo" data-passo="1"><line x1="272" y1="104" x2="272" y2="64"/><polygon points="272,64 267.5,72 276.5,72" fill="currentColor" stroke="none"/><rect x="190" y="16" width="164" height="48" rx="5" stroke-dasharray="5 4"/><text x="272.0" y="36.0" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">--keep</text><text x="272.0" y="55.0" text-anchor="middle" font-size="11.5" fill="currentColor" stroke="none" opacity=".72">grava em out/</text></g><g class="passo" data-passo="2"><line x1="338" y1="142" x2="400" y2="142"/><polygon points="400,142 392,137.5 392,146.5" fill="currentColor" stroke="none"/><text x="369.0" y="133" text-anchor="middle" font-size="11" fill="currentColor" stroke="none" opacity=".8">erro</text><rect x="400" y="104" width="136" height="76" rx="5"/><text x="468.0" y="138.0" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">nada em disco</text><text x="468.0" y="157.0" text-anchor="middle" font-size="11.5" fill="currentColor" stroke="none" opacity=".72">sem arquivo vazio</text></g></svg>
+<svg viewBox="0 0 560 300" role="img" aria-label="O áudio toca e fica guardado, pode ser ouvido de novo, e erro não deixa arquivo em disco" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5">
+  <rect x="18" y="118" width="112" height="60" rx="5"/>
+  <text x="74" y="153" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">mp3 pronto</text>
+
+  <g class="passo" data-passo="0">
+    <line x1="130" y1="148" x2="192" y2="148"/>
+    <polygon points="192,148 184,143.5 184,152.5" fill="currentColor" stroke="none"/>
+    <text x="161" y="139" text-anchor="middle" font-size="11" fill="currentColor" stroke="none" opacity=".8">toca</text>
+    <rect x="192" y="110" width="140" height="76" rx="5"/>
+    <text x="262" y="144" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">player do sistema</text>
+    <text x="262" y="164" text-anchor="middle" font-size="11.5" fill="currentColor" stroke="none" opacity=".72">e fica guardado</text>
+  </g>
+
+  <g class="passo" data-passo="1">
+    <line x1="262" y1="110" x2="262" y2="70"/>
+    <polygon points="262,70 257.5,78 266.5,78" fill="currentColor" stroke="none"/>
+    <rect x="176" y="20" width="172" height="50" rx="5"/>
+    <text x="262" y="42" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">histórico</text>
+    <text x="262" y="61" text-anchor="middle" font-size="11.5" fill="currentColor" stroke="none" opacity=".72">ouvir de novo sem custo</text>
+  </g>
+
+  <g class="passo" data-passo="2">
+    <line x1="332" y1="148" x2="396" y2="148"/>
+    <polygon points="396,148 388,143.5 388,152.5" fill="currentColor" stroke="none"/>
+    <text x="364" y="139" text-anchor="middle" font-size="11" fill="currentColor" stroke="none" opacity=".8">erro</text>
+    <rect x="396" y="110" width="146" height="76" rx="5"/>
+    <text x="469" y="144" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">nada em disco</text>
+    <text x="469" y="164" text-anchor="middle" font-size="11.5" fill="currentColor" stroke="none" opacity=".72">sem arquivo vazio</text>
+  </g>
+</svg>

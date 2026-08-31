@@ -1,18 +1,15 @@
 #!/usr/bin/env python3
 """Hook SessionStart: pede ao Claude que narre um roteiro de cada resposta.
 
-A narracao automatica antiga era um hook Stop: pegava a resposta pronta,
-limpava a marcacao e mandava para a API. Sem modelo no caminho, caminho de
-arquivo, flag e nome de variavel iam para o audio como estao, e quem ouvia
-recebia o texto da tela lido em voz alta.
+O hook injeta instrucao, e nunca sintetiza nada: quem escreve o roteiro falado
+da resposta e o Claude, e e o roteiro que vai para o audio. Resposta crua daria
+caminho de arquivo, flag e nome de variavel lidos em voz alta.
 
-Aqui o trabalho volta para o Claude: em vez de narrar a resposta, ele escreve
-um roteiro falado dela e narra o roteiro. O interruptor continua sendo o
-arquivo sentinela (python narrar.py on/off); sem ele o hook sai calado, porque
-o stdout do SessionStart entra no contexto da sessao.
+O interruptor e o arquivo sentinela (python narrar.py on/off); sem ele o hook
+sai calado, porque o stdout do SessionStart entra no contexto da sessao.
 
-O texto injetado mora no narrar.py, que tambem o imprime com --instrucao quando
-a skill liga a narracao no meio da sessao.
+O texto injetado mora no narrar.py, que tambem o imprime ao ligar a narracao no
+meio da sessao.
 """
 
 from __future__ import annotations

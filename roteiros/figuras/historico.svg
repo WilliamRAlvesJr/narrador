@@ -1,0 +1,40 @@
+<svg viewBox="0 0 560 300" role="img" aria-label="Cada narração é anotada no histórico, escolhida numa lista e aberta no player do computador" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5">
+  <rect x="18" y="120" width="104" height="56" rx="5"/>
+  <text x="70" y="145" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">narração</text>
+  <text x="70" y="163" text-anchor="middle" font-size="11.5" fill="currentColor" stroke="none" opacity=".72">recém-feita</text>
+
+  <g class="passo" data-passo="0">
+    <line x1="122" y1="148" x2="176" y2="148"/>
+    <polygon points="176,148 168,143.5 168,152.5" fill="currentColor" stroke="none"/>
+    <text x="149" y="139" text-anchor="middle" font-size="11" fill="currentColor" stroke="none" opacity=".8">anota</text>
+    <rect x="176" y="96" width="150" height="104" rx="5"/>
+    <text x="251" y="118" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">histórico</text>
+    <line x1="192" y1="134" x2="310" y2="134" opacity=".55"/>
+    <line x1="192" y1="152" x2="310" y2="152" opacity=".55"/>
+    <line x1="192" y1="170" x2="310" y2="170" opacity=".55"/>
+    <line x1="192" y1="188" x2="272" y2="188" opacity=".55"/>
+    <text x="251" y="216" text-anchor="middle" font-size="11.5" fill="currentColor" stroke="none" opacity=".72">quando, origem, duração</text>
+  </g>
+
+  <g class="passo" data-passo="1">
+    <line x1="326" y1="148" x2="380" y2="148"/>
+    <polygon points="380,148 372,143.5 372,152.5" fill="currentColor" stroke="none"/>
+    <text x="353" y="139" text-anchor="middle" font-size="11" fill="currentColor" stroke="none" opacity=".8">as 4 últimas</text>
+    <rect x="380" y="86" width="160" height="30" rx="4" opacity=".55"/>
+    <rect x="380" y="122" width="160" height="30" rx="4" stroke-width="2.5"/>
+    <text x="460" y="142" text-anchor="middle" font-size="12" fill="currentColor" stroke="none">você escolhe uma</text>
+    <rect x="380" y="158" width="160" height="30" rx="4" opacity=".55"/>
+    <rect x="380" y="194" width="160" height="30" rx="4" opacity=".55"/>
+  </g>
+
+  <g class="passo" data-passo="2">
+    <line x1="460" y1="224" x2="460" y2="256"/>
+    <polygon points="460,256 455.5,248 464.5,248" fill="currentColor" stroke="none"/>
+    <rect x="332" y="256" width="208" height="34" rx="5"/>
+    <text x="392" y="278" text-anchor="middle" font-size="13" fill="currentColor" stroke="none">seu player</text>
+    <circle cx="470" cy="273" r="8"/>
+    <polygon points="467,269 476,273 467,277" fill="currentColor" stroke="none"/>
+    <line x1="488" y1="273" x2="528" y2="273" opacity=".7"/>
+    <circle cx="504" cy="273" r="3.5" fill="currentColor"/>
+  </g>
+</svg>

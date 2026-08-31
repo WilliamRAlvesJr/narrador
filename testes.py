@@ -11,6 +11,7 @@ audio gravado nem da maquina de quem roda.
 
 from __future__ import annotations
 
+import json
 import os
 import subprocess
 import sys
@@ -26,7 +27,6 @@ import config  # noqa: E402
 import historico  # noqa: E402
 import mp3  # noqa: E402
 import speak  # noqa: E402
-import tocador  # noqa: E402
 
 # --------------------------------------------------------------------------- #
 # MP3 de mentira: MPEG-1 Layer III, 128 kbps, 44100 Hz, sem padding
@@ -334,8 +334,8 @@ class TestEnv(unittest.TestCase):
 class TestInterruptor(unittest.TestCase):
     """narrar.py de ponta a ponta, com a pasta de dados em lugar temporario."""
 
-    def rodar(self, *argumentos, pasta):
-        ambiente = dict(os.environ, NARRADOR_HOME=pasta)
+    def rodar(self, *argumentos, pasta, chave="sk-de-mentira"):
+        ambiente = dict(os.environ, NARRADOR_HOME=pasta, ELEVENLABS_API_KEY=chave)
         return subprocess.run(
             [sys.executable, str(RAIZ / "narrar.py"), *argumentos],
             capture_output=True, text=True, encoding="utf-8", env=ambiente,
@@ -357,6 +357,14 @@ class TestInterruptor(unittest.TestCase):
             self.assertFalse(sentinela.exists())
             self.assertIn("DESLIGADA", saida.stdout)
 
+    def test_ligar_sem_chave_nao_liga(self):
+        """Narracao ligada sem chave falharia em toda resposta: melhor nao ligar."""
+        with tempfile.TemporaryDirectory() as pasta:
+            saida = self.rodar("on", pasta=pasta, chave=" ")
+            self.assertEqual(saida.returncode, 1)
+            self.assertFalse((Path(pasta) / "narrar-respostas").exists())
+            self.assertIn("falta a chave", saida.stdout)
+
     def test_off_repetido_nao_e_erro(self):
         with tempfile.TemporaryDirectory() as pasta:
             self.assertEqual(self.rodar("off", pasta=pasta).returncode, 0)
@@ -367,11 +375,12 @@ class TestInterruptor(unittest.TestCase):
             self.assertEqual(saida.returncode, 2)
             self.assertIn("desconhecido", saida.stderr)
 
-    def test_instrucao_traz_o_caminho_do_speak(self):
+    def test_ligar_imprime_a_instrucao_com_o_caminho_do_speak(self):
+        """Ligar num comando so: a confirmacao e as regras saem juntas."""
         with tempfile.TemporaryDirectory() as pasta:
-            saida = self.rodar("--instrucao", pasta=pasta)
-            self.assertIn("speak.py", saida.stdout)
+            saida = self.rodar("on", pasta=pasta)
             self.assertIn("LIGADA", saida.stdout)
+            self.assertIn("speak.py", saida.stdout)
 
 
 class TestBarraDeEstado(unittest.TestCase):
@@ -467,35 +476,35 @@ class TestHistorico(unittest.TestCase):
         self.assertIn("audio apagado", historico.formatar(historico.recentes()))
 
 
-class TestTocador(unittest.TestCase):
-    def setUp(self):
-        self.pasta = tempfile.TemporaryDirectory()
-        self.estado_original = tocador.ESTADO
-        self.dados_original = config.DADOS
-        config.DADOS = Path(self.pasta.name)
-        tocador.ESTADO = Path(self.pasta.name) / "tocando.json"
+class TestAbrir(unittest.TestCase):
+    """O --abrir so entrega o arquivo ao sistema; aqui testamos as recusas."""
 
-    def tearDown(self):
-        tocador.ESTADO = self.estado_original
-        config.DADOS = self.dados_original
-        self.pasta.cleanup()
+    def rodar(self, pasta: str, *argumentos) -> subprocess.CompletedProcess:
+        ambiente = dict(os.environ, NARRADOR_HOME=pasta)
+        return subprocess.run(
+            [sys.executable, str(RAIZ / "speak.py"), *argumentos],
+            capture_output=True, text=True, encoding="utf-8", env=ambiente,
+        )
 
-    def test_sem_estado_nada_esta_tocando(self):
-        self.assertIsNone(tocador.tocando())
-        self.assertIsNone(tocador.parar())
+    def test_sem_historico(self):
+        with tempfile.TemporaryDirectory() as pasta:
+            saida = self.rodar(pasta, "--abrir")
+            self.assertEqual(saida.returncode, 1)
+            self.assertIn("Nao existe narracao", saida.stdout + saida.stderr)
 
-    def test_anotacao_orfa_e_limpa(self):
-        tocador.anotar(999999, Path("x.mp3"))  # PID que nao existe
-        self.assertIsNone(tocador.tocando())
-        self.assertFalse(tocador.ESTADO.exists())
-
-    def test_estado_corrompido_nao_quebra(self):
-        tocador.ESTADO.write_text("nao e json", encoding="utf-8")
-        self.assertIsNone(tocador.tocando())
-
-    def test_pid_invalido(self):
-        self.assertFalse(tocador.vivo(0))
-        self.assertFalse(tocador.vivo(-1))
+    def test_audio_ja_apagado(self):
+        with tempfile.TemporaryDirectory() as pasta:
+            linha = {
+                "quando": "2026-01-01 10:00:00",
+                "arquivo": str(Path(pasta) / "sumiu.mp3"),
+                "origem": "nota.md", "caracteres": 10, "duracao": 3.0,
+                "voz": "v", "modelo": "m", "velocidade": 1.0,
+            }
+            (Path(pasta) / "historico.jsonl").write_text(
+                json.dumps(linha) + "\n", encoding="utf-8")
+            saida = self.rodar(pasta, "--abrir", "1")
+            self.assertEqual(saida.returncode, 1)
+            self.assertIn("saiu do disco", saida.stdout + saida.stderr)
 
 
 class TestResumo(unittest.TestCase):

@@ -1,0 +1,38 @@
+<svg viewBox="0 0 560 300" role="img" aria-label="A bateria de testes roda sem rede e sem chave, com síntese falsa e áudio montado à mão" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5">
+  <g class="passo" data-passo="0">
+    <rect x="20" y="108" width="132" height="84" rx="5"/>
+    <text x="86" y="140" text-anchor="middle" font-size="15" fill="currentColor" stroke="none">56 testes</text>
+    <text x="86" y="162" text-anchor="middle" font-size="11.5" fill="currentColor" stroke="none" opacity=".72">poucos segundos</text>
+    <polyline points="62,176 76,188 110,158" stroke-width="2.5"/>
+  </g>
+
+  <g class="passo" data-passo="1">
+    <line x1="152" y1="150" x2="206" y2="150"/>
+    <polygon points="206,150 198,145.5 198,154.5" fill="currentColor" stroke="none"/>
+
+    <rect x="206" y="42" width="164" height="76" rx="5" stroke-dasharray="5 4"/>
+    <text x="288" y="70" text-anchor="middle" font-size="13" fill="currentColor" stroke="none">síntese de mentira</text>
+    <text x="288" y="90" text-anchor="middle" font-size="11.5" fill="currentColor" stroke="none" opacity=".72">nenhuma chamada real</text>
+    <line x1="370" y1="80" x2="420" y2="80" opacity=".8"/>
+    <line x1="404" y1="66" x2="424" y2="94" opacity=".9"/>
+    <line x1="424" y1="66" x2="404" y2="94" opacity=".9"/>
+    <text x="452" y="84" text-anchor="middle" font-size="12" fill="currentColor" stroke="none" opacity=".8">rede</text>
+
+    <rect x="206" y="180" width="164" height="76" rx="5" stroke-dasharray="5 4"/>
+    <text x="288" y="208" text-anchor="middle" font-size="13" fill="currentColor" stroke="none">áudio montado</text>
+    <rect x="222" y="222" width="26" height="20" rx="2" opacity=".8"/>
+    <rect x="254" y="222" width="26" height="20" rx="2" opacity=".8"/>
+    <rect x="286" y="222" width="26" height="20" rx="2" opacity=".8"/>
+    <rect x="318" y="222" width="26" height="20" rx="2" opacity=".8"/>
+    <text x="288" y="252" text-anchor="middle" font-size="11" fill="currentColor" stroke="none" opacity=".72">frame a frame</text>
+  </g>
+
+  <g class="passo" data-passo="2">
+    <line x1="370" y1="150" x2="424" y2="150"/>
+    <polygon points="424,150 416,145.5 416,154.5" fill="currentColor" stroke="none"/>
+    <text x="397" y="141" text-anchor="middle" font-size="11" fill="currentColor" stroke="none" opacity=".8">falha aqui</text>
+    <rect x="424" y="112" width="120" height="76" rx="5"/>
+    <text x="484" y="144" text-anchor="middle" font-size="13" fill="currentColor" stroke="none">antes de</text>
+    <text x="484" y="164" text-anchor="middle" font-size="13" fill="currentColor" stroke="none">gastar crédito</text>
+  </g>
+</svg>

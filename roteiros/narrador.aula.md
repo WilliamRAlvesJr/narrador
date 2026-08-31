@@ -33,9 +33,15 @@ figura: figuras/a-fala.svg
 
 ## Etapa quatro: o som
 figura: figuras/o-som.svg
-- Toca e some :: No Windows a reprodução usa o player nativo do sistema, e o arquivo temporário é apagado quando termina.
-- Guardar é opcional :: Se você quiser ficar com o áudio, existe a opção de gravá-lo numa pasta do projeto.
+- Toca e fica guardado :: No Windows a reprodução usa o player nativo do sistema, e o arquivo fica na pasta de dados, anotado no histórico.
+- Ouvir de novo é de graça :: Como o áudio foi guardado, repetir uma narração antiga é só abri-la no seu player, sem gastar créditos.
 - Erro não deixa lixo :: Se a API falhar no meio, nada é escrito em disco, para você não encontrar um arquivo vazio depois.
+
+## Histórico e replay
+figura: figuras/historico.svg
+- Cada narração fica anotada :: Toda vez que eu narro, o áudio vai para a pasta de dados com uma linha de registro: quando foi, de onde veio, quanto durou e com que voz.
+- Você escolhe numa lista :: Ao pedir para ouvir de novo, eu mostro as últimas quatro e você escolhe qual quer.
+- Abre no seu programa de áudio :: A escolhida abre no player do computador, com a barra, a pausa e o volume que ele já tem, sem gastar crédito nenhum.
 
 ## O roteiro antes do áudio
 figura: figuras/roteiro.svg
@@ -45,9 +51,15 @@ figura: figuras/roteiro.svg
 
 ## Narração automática
 figura: figuras/narracao-automatica.svg
-- Também vale para o que eu respondo :: Ligado o modo automático, no fim de cada resposta eu escrevo um roteiro dela e narro o roteiro, nunca o texto da tela.
-- Desligado por padrão :: Ele só age enquanto um arquivo específico existir na pasta de dados. Um comando liga, outro desliga, e vale da próxima sessão em diante.
+- Também vale para o que eu respondo :: Ligado o modo automático, no fim de cada resposta eu escrevo um roteiro dela e narro o roteiro, nunca o texto da tela. A narração corre em segundo plano, e você a encerra quando quiser silêncio.
+- Desligado por padrão :: Ele só age enquanto um arquivo específico existir na pasta de dados. Um comando liga, outro desliga, e vale já na conversa em andamento.
 - Custa créditos :: Fica desligado porque cada resposta narrada consome créditos da sua conta.
+
+## O que segura tudo isso
+figura: figuras/testes.svg
+- Cinquenta e seis testes :: O projeto tem uma bateria de testes que roda em poucos segundos, sem rede e sem chave nenhuma.
+- Áudio de mentira :: A síntese é trocada por uma função falsa, e o arquivo de som usado nos testes é montado ali mesmo, pedaço por pedaço.
+- Nada de surpresa cara :: Assim dá para mexer na quebra do texto ou na emenda do áudio e descobrir o erro na hora, e não no meio de uma narração já paga.
 
 ## Esta aula
 figura: figuras/esta-aula.svg

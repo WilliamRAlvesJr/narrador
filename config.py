@@ -50,10 +50,6 @@ def carregar_env() -> None:
             os.environ.setdefault(chave.strip(), valor)
 
 
-def onde_por_a_chave() -> str:
-    return str(DADOS / ".env")
-
-
 def instrucao_da_chave() -> str:
     """A frase que o usuario precisa ler: criar o .env, ou so preencher."""
     destino = DADOS / ".env"
@@ -71,10 +67,8 @@ EXEMPLO = RAIZ / ".env.example"
 def semear_env() -> Path | None:
     """Copia o .env.example para a pasta de dados na primeira vez.
 
-    Chamado pelo hook SessionStart: e o mais perto de "na instalacao" que um
-    plugin alcanca, ja que o codigo so roda quando o Claude Code abre a sessao.
-    Devolve o caminho criado, ou None se ja havia .env, se a chave veio do
-    ambiente, ou se nada pode ser escrito. Nunca sobrescreve.
+    Nunca sobrescreve. Devolve o caminho criado, ou None se ja havia .env, se a
+    chave veio do ambiente, ou se nada pode ser escrito.
     """
     destino = DADOS / ".env"
     if destino.exists() or os.environ.get("ELEVENLABS_API_KEY", "").strip():
@@ -95,10 +89,9 @@ STATUSLINE = RAIZ / "statusline.py"
 def sincronizar_statusline() -> Path | None:
     """Mantem uma copia do statusline.py na pasta de dados.
 
-    A barra de estado guarda o caminho do comando no settings.json do usuario, e
-    o caminho do plugin no cache leva a versao no nome: apontar para la quebraria
-    a barra a cada atualizacao. A copia mora num caminho estavel e e reescrita
-    quando o plugin muda. Devolve o destino quando escreveu, senao None.
+    A barra guarda esse caminho no settings.json do usuario, e o do plugin leva a
+    versao no nome: so um caminho estavel sobrevive a atualizacao. Devolve o
+    destino quando escreveu, senao None.
     """
     destino = DADOS / "statusline.py"
     try:
@@ -116,7 +109,7 @@ def sincronizar_statusline() -> Path | None:
 
 
 # --------------------------------------------------------------------------- #
-# checagem, chamada pelas skills antes de escrever o roteiro
+# checagem, rodada antes de escrever qualquer roteiro
 # --------------------------------------------------------------------------- #
 CAMPOS = [
     ("ELEVENLABS_VOICE_ID", "voz"),
