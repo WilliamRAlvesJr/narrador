@@ -9,7 +9,7 @@ porque `on` e `off` imprimem tambem o texto que passa a valer, e a skill manda o
 Claude segui-lo. Esse texto mora aqui, e nao no hook, porque os dois caminhos
 precisam do mesmo: uma fonte so evita versoes divergentes.
 
-Uso: python narrar.py [on|off]
+Uso: python3 narrar.py [on|off]
 """
 
 from __future__ import annotations
@@ -22,7 +22,7 @@ ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT))
 import config  # noqa: E402
 
-USO = "Uso: python narrar.py [on|off]"
+USO = "Uso: python3 narrar.py [on|off]"
 
 INSTRUCAO = """\
 [narrador] Narração automática das respostas: LIGADA nesta sessão.
@@ -31,7 +31,7 @@ Ao terminar uma resposta de substância, narre-a como último passo do turno:
 
 1. Escreva um roteiro falado num arquivo .md temporário (use o scratchpad da sessão).
 2. Rode **em segundo plano** (run_in_background), nunca no turno:
-   python "{speak}" "<o arquivo do roteiro>"
+   "{python}" "{speak}" "<o arquivo do roteiro>"
    Assim a narração vira uma tarefa que o usuário encerra quando quiser, e o
    turno não fica preso pelo tempo do áudio. Encerrar a tarefa corta o som.
 
@@ -58,8 +58,8 @@ DESLIGA_NA_SESSAO = (
 
 
 def instrucao() -> str:
-    """O texto que o hook injeta no inicio da sessao, com o caminho ja resolvido."""
-    return INSTRUCAO.format(speak=ROOT / "speak.py")
+    """O texto do hook, com o interpretador em uso e o caminho ja resolvidos."""
+    return INSTRUCAO.format(python=sys.executable, speak=ROOT / "speak.py")
 
 
 def estado() -> str:

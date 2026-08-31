@@ -5,18 +5,12 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python",
-            "args": [
-              "${CLAUDE_PLUGIN_ROOT}/hooks/semear_env.py"
-            ],
+            "command": "NARRADOR_PY=python3; command -v python3 >/dev/null 2>&1 || NARRADOR_PY=python; \"$NARRADOR_PY\" \"${CLAUDE_PLUGIN_ROOT}/hooks/semear_env.py\"",
             "timeout": 10
           },
           {
             "type": "command",
-            "command": "python",
-            "args": [
-              "${CLAUDE_PLUGIN_ROOT}/hooks/narrar_respostas.py"
-            ],
+            "command": "NARRADOR_PY=python3; command -v python3 >/dev/null 2>&1 || NARRADOR_PY=python; \"$NARRADOR_PY\" \"${CLAUDE_PLUGIN_ROOT}/hooks/narrar_respostas.py\"",
             "timeout": 10
           }
         ]

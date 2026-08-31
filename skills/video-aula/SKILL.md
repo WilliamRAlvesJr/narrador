@@ -10,15 +10,16 @@ Escreva um roteiro, desenhe os diagramas, gere a página e publique. O áudio us
 voz do usuário na ElevenLabs; os tempos vêm do endpoint `with-timestamps`, então
 cada tópico e cada parte do desenho acende no instante exato da fala.
 
-```powershell
-python "${CLAUDE_PLUGIN_ROOT}/aula.py" <roteiro>.aula.md --dry-run
-python "${CLAUDE_PLUGIN_ROOT}/aula.py" <roteiro>.aula.md
+```bash
+python3 "${CLAUDE_PLUGIN_ROOT}/aula.py" <roteiro>.aula.md --dry-run
+python3 "${CLAUDE_PLUGIN_ROOT}/aula.py" <roteiro>.aula.md
 ```
 
 Os scripts ficam na raiz do plugin: `${CLAUDE_PLUGIN_ROOT}`. Se a variável não
 estiver no ambiente do seu shell, a raiz é o diretório dois níveis acima do
 "Base directory for this skill" mostrado no topo desta skill. Cite o caminho
-entre aspas: em algumas instalações ele contém espaços.
+entre aspas: em algumas instalações ele contém espaços. Onde `python3`
+não existir, chame `python`: em algumas máquinas Windows esse é o único nome.
 
 Saída: `~/.claude/narrador/out/<nome>.html`, com o áudio embutido (o comando
 imprime o caminho). Publique com a ferramenta Artifact
@@ -27,8 +28,8 @@ link não muda.
 
 ## Primeiro comando: cheque a configuração
 
-```powershell
-python "${CLAUDE_PLUGIN_ROOT}/config.py"
+```bash
+python3 "${CLAUDE_PLUGIN_ROOT}/config.py"
 ```
 
 Roda num instante, não chama a API e não gasta crédito. Imprime de onde veio a
@@ -88,7 +89,7 @@ olhe um antes de inventar outro traço.
 
 ## Ordem de trabalho
 
-1. `python "<raiz>/config.py"`: chave, voz e idioma no lugar.
+1. `python3 "<raiz>/config.py"`: chave, voz e idioma no lugar.
 2. Escreva o roteiro inteiro antes de gerar nada.
 3. Desenhe as figuras e cheque que cada `data-passo` existe no slide certo.
 4. `--dry-run`: confira os slides e **diga ao usuário quantos caracteres são**,

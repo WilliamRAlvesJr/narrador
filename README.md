@@ -22,13 +22,18 @@ ELEVENLABS_LANGUAGE=pt
 ELEVENLABS_SPEED=0.9
 ```
 
-Para conferir, rode `python config.py` na raiz do plugin: ele imprime voz,
+Para conferir, rode `python3 config.py` na raiz do plugin: ele imprime voz,
 modelo, idioma e se a chave existe, sem chamar a API. É o mesmo comando que o
 Claude roda antes de escrever um roteiro para narrar.
 
-Requisitos: Python 3.10+. No Windows a reprodução usa
-`System.Windows.Media.MediaPlayer` via PowerShell; em macOS e Linux tenta
-`afplay`, `mpv` e `ffplay`, nessa ordem.
+Requisitos: Python 3.10+, com o interpretador no PATH. Os comandos deste README
+usam `python3`; em máquinas Windows onde só existe `python`, é esse o nome. O hook
+do plugin resolve os dois sozinho.
+
+A reprodução no Windows usa `System.Windows.Media.MediaPlayer` via PowerShell; em
+macOS e Linux tenta `afplay`, `mpv` e `ffplay`, nessa ordem, e sem nenhum deles o
+áudio é apenas salvo. `replay` abre o arquivo no `open` (macOS) ou no `xdg-open`
+(Linux).
 
 Nada do que você mantém fica dentro do plugin, que é reescrito a cada
 atualização: chave, áudio, histórico e cache moram em `~/.claude/narrador/`
@@ -68,9 +73,9 @@ Toda narração fica em `~/.claude/narrador/out/`, anotada em `historico.jsonl` 
 data, origem, duração e a voz usada. Guarda as últimas 50
 (`NARRADOR_HISTORICO_MAX` muda o número) e apaga o áudio das que saem.
 
-```powershell
-python speak.py --historico           # lista as últimas narrações
-python speak.py --abrir 2             # abre a segunda no player do sistema
+```bash
+python3 speak.py --historico           # lista as últimas narrações
+python3 speak.py --abrir 2             # abre a segunda no player do sistema
 ```
 
 ## Narração automática
@@ -81,9 +86,9 @@ começo da sessão, ligar e desligar imprimem também a instrução que passa a 
 e a skill manda o Claude segui-la, então a conversa em andamento muda junto.
 
 ```
-python narrar.py on     liga
-python narrar.py off    desliga
-python narrar.py        mostra o estado e onde fica a sentinela
+python3 narrar.py on     liga
+python3 narrar.py off    desliga
+python3 narrar.py        mostra o estado e onde fica a sentinela
 ```
 
 Confirmação curta e resposta de uma linha não viram áudio, e cada narração
@@ -95,11 +100,12 @@ Para ver o estado o tempo todo, aponte a barra do Claude Code para o
 ```json
 "statusLine": {
   "type": "command",
-  "command": "python \"C:/Users/voce/.claude/narrador/statusline.py\""
+  "command": "python3 \"/home/voce/.claude/narrador/statusline.py\""
 }
 ```
 
-Troque pelo caminho da sua pasta de dados, escrito por extenso: `python narrar.py`
+No Windows, `"command": "python \"C:/Users/voce/.claude/narrador/statusline.py\""`.
+Troque pelo caminho da sua pasta de dados, escrito por extenso: `python3 narrar.py`
 imprime onde ela fica. Nada de `~` aí, que nem todo shell expande.
 
 A barra mostra a pasta, o modelo e `🔊 narrando` ou `🔇 sem narrar`. O arquivo
@@ -109,15 +115,15 @@ seguinte.
 
 ## Uso direto, sem o Claude
 
-```powershell
-python speak.py notas.md              # extrai, sintetiza e toca
-python speak.py --text "bom dia"
-type notas.txt | python speak.py -
-python speak.py notas.md --dry-run    # mostra o texto extraído e a config
-python speak.py --list-voices
+```bash
+python3 speak.py notas.md              # extrai, sintetiza e toca
+python3 speak.py --text "bom dia"
+cat notas.txt | python3 speak.py -
+python3 speak.py notas.md --dry-run    # mostra o texto extraído e a config
+python3 speak.py --list-voices
 
-python aula.py roteiros\narrador.aula.md --dry-run
-python aula.py roteiros\narrador.aula.md
+python3 aula.py roteiros/narrador.aula.md --dry-run
+python3 aula.py roteiros/narrador.aula.md
 ```
 
 Flags de `speak.py`: `--as md|html|txt`, `--voice`, `--model`, `--format`,
@@ -184,10 +190,10 @@ então ajustar figura ou layout e regerar não consome créditos.
 ## Testes
 
 ```
-python testes.py
+python3 testes.py
 ```
 
-São 56, só stdlib, sem rede e sem chave: a síntese é substituída por uma função
+São 58, só stdlib, sem rede e sem chave: a síntese é substituída por uma função
 de mentira e o MP3 dos testes é montado frame a frame. Cobrem extração,
 chunking, pausas, emenda, cache, velocidade, histórico, roteiro da aula, leitura
 do `.env`, o interruptor e a barra de estado.

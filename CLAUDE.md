@@ -27,14 +27,14 @@ ou a raiz derivada do "Base directory for this skill".
 | `mp3.py` | limpeza de ID3/Xing e duração por contagem de frames |
 | `aula.py` | roteiro em página de aula, com tempos por caractere |
 | `aula_template.html` | layout e player da aula |
-| `config.py` | pasta de dados, `.env` e cache; `python config.py` checa a configuração |
+| `config.py` | pasta de dados, `.env` e cache; `python3 config.py` checa a configuração |
 | `narrar.py` | interruptor da narração automática: sentinela, e o texto da instrução que o hook e o `on` injetam |
 | `statusline.py` | barra de estado do Claude Code; autocontido, roda da cópia em `~/.claude/narrador/` |
-| `testes.py` | `python testes.py`: stdlib, sem rede, com a síntese trocada por uma função de mentira |
+| `testes.py` | `python3 testes.py`: stdlib, sem rede, com a síntese trocada por uma função de mentira |
 | `hooks/semear_env.py` | hook `SessionStart`: semeia o `.env` e atualiza a cópia do `statusline.py` |
 | `hooks/narrar_respostas.py` | hook `SessionStart`: manda narrar um roteiro de cada resposta, ligado pelo arquivo sentinela |
 
-Rode `python testes.py` antes de commitar: 56 testes, alguns segundos, nenhuma
+Rode `python3 testes.py` antes de commitar: 58 testes, alguns segundos, nenhuma
 chamada à API.
 
 ## Quem manda no áudio
@@ -53,6 +53,13 @@ chamada à API.
 
 ## Invariantes
 
+- **Nada de `python` puro num comando do plugin.** Em Linux e macOS esse nome
+  costuma não existir, e em Windows costuma ser o único: os dois hooks do
+  `hooks.json` rodam em shell form e escolhem entre `python3` e `python` antes de
+  chamar o script, as skills e o README pedem `python3` com a ressalva do outro
+  nome, e o texto que `narrar.py` injeta cita o `sys.executable` que está
+  rodando. Shell form também significa: nada de `args`, e todo caminho entre
+  aspas.
 - **`load_dotenv` antes do parser.** Os defaults das flags saem das variáveis de
   ambiente; carregar o `.env` depois de `parse_args` faz o script ignorar a
   configuração inteira e narrar com a voz errada.

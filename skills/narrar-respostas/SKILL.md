@@ -9,16 +9,17 @@ user-invocable: true
 Um comando, uma linha de resposta. Não explique o mecanismo, não confirme antes,
 não pergunte nada quando o estado pedido veio junto ("liga", "desliga").
 
-```powershell
-python "${CLAUDE_PLUGIN_ROOT}/narrar.py" on      # ligar
-python "${CLAUDE_PLUGIN_ROOT}/narrar.py" off     # desligar
-python "${CLAUDE_PLUGIN_ROOT}/narrar.py"         # só ver o estado
+```bash
+python3 "${CLAUDE_PLUGIN_ROOT}/narrar.py" on      # ligar
+python3 "${CLAUDE_PLUGIN_ROOT}/narrar.py" off     # desligar
+python3 "${CLAUDE_PLUGIN_ROOT}/narrar.py"         # só ver o estado
 ```
 
 Os scripts ficam na raiz do plugin: `${CLAUDE_PLUGIN_ROOT}`. Se a variável não
 estiver no ambiente do seu shell, a raiz é o diretório dois níveis acima do
 "Base directory for this skill" mostrado no topo desta skill. Cite o caminho
-entre aspas: em algumas instalações ele contém espaços.
+entre aspas: em algumas instalações ele contém espaços. Onde `python3`
+não existir, chame `python`: em algumas máquinas Windows esse é o único nome.
 
 ## O que fazer com a saída
 

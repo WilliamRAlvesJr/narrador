@@ -26,6 +26,7 @@ import aula  # noqa: E402
 import config  # noqa: E402
 import historico  # noqa: E402
 import mp3  # noqa: E402
+import narrar  # noqa: E402
 import speak  # noqa: E402
 
 # --------------------------------------------------------------------------- #
@@ -505,6 +506,25 @@ class TestAbrir(unittest.TestCase):
             saida = self.rodar(pasta, "--abrir", "1")
             self.assertEqual(saida.returncode, 1)
             self.assertIn("saiu do disco", saida.stdout + saida.stderr)
+
+
+class TestInterpretadorPortavel(unittest.TestCase):
+    """`python` nao existe em Linux nem em macOS; `python3` falta em Windows."""
+
+    def hooks(self) -> list[dict]:
+        dados = json.loads((RAIZ / "hooks" / "hooks.json").read_text(encoding="utf-8"))
+        return [h for grupo in dados["hooks"].values()
+                for entrada in grupo for h in entrada["hooks"]]
+
+    def test_hooks_escolhem_o_interpretador(self):
+        for hook in self.hooks():
+            comando = hook["command"]
+            self.assertNotIn("args", hook, "args liga o exec form e ignora o fallback")
+            self.assertIn("command -v python3", comando)
+            self.assertIn("python", comando)
+
+    def test_instrucao_cita_o_interpretador_em_uso(self):
+        self.assertIn(sys.executable, narrar.instrucao())
 
 
 class TestResumo(unittest.TestCase):

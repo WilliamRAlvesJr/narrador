@@ -8,15 +8,16 @@ user-invocable: true
 
 Três passos, sem explicação no meio. O áudio já existe: nada aqui chama a API.
 
-```powershell
-python "${CLAUDE_PLUGIN_ROOT}/speak.py" --historico 4
-python "${CLAUDE_PLUGIN_ROOT}/speak.py" --abrir 2
+```bash
+python3 "${CLAUDE_PLUGIN_ROOT}/speak.py" --historico 4
+python3 "${CLAUDE_PLUGIN_ROOT}/speak.py" --abrir 2
 ```
 
 Os scripts ficam na raiz do plugin: `${CLAUDE_PLUGIN_ROOT}`. Se a variável não
 estiver no ambiente do seu shell, a raiz é o diretório dois níveis acima do
 "Base directory for this skill" mostrado no topo desta skill. Cite o caminho
-entre aspas: em algumas instalações ele contém espaços.
+entre aspas: em algumas instalações ele contém espaços. Onde `python3`
+não existir, chame `python`: em algumas máquinas Windows esse é o único nome.
 
 ## Entre um comando e outro: o seletor
 

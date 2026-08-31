@@ -8,14 +8,15 @@ user-invocable: true
 
 Gere o áudio com o script abaixo. Nunca "leia" imitando fala no chat: o pedido é por som.
 
-```powershell
-python "${CLAUDE_PLUGIN_ROOT}/speak.py" <arquivo-ou-texto>
+```bash
+python3 "${CLAUDE_PLUGIN_ROOT}/speak.py" <arquivo-ou-texto>
 ```
 
 Os scripts ficam na raiz do plugin: `${CLAUDE_PLUGIN_ROOT}`. Se a variável não
 estiver no ambiente do seu shell, a raiz é o diretório dois níveis acima do
 "Base directory for this skill" mostrado no topo desta skill. Cite o caminho
-entre aspas: em algumas instalações ele contém espaços.
+entre aspas: em algumas instalações ele contém espaços. Onde `python3`
+não existir, chame `python`: em algumas máquinas Windows esse é o único nome.
 
 Aceita `.md`, `.markdown`, `.txt`, `.html`, `.htm` (formato detectado pela extensão),
 texto literal, ou `-` para stdin. O script extrai o texto puro (remove tags HTML,
@@ -37,8 +38,8 @@ tarefa.
 
 O áudio de cada narração fica guardado, e a lista do que já foi narrado sai com:
 
-```powershell
-python "${CLAUDE_PLUGIN_ROOT}/speak.py" --historico
+```bash
+python3 "${CLAUDE_PLUGIN_ROOT}/speak.py" --historico
 ```
 
 Cada linha traz data, duração e origem.
@@ -51,8 +52,8 @@ mesmo texto.
 
 ## Primeiro comando: cheque a configuração
 
-```powershell
-python "${CLAUDE_PLUGIN_ROOT}/config.py"
+```bash
+python3 "${CLAUDE_PLUGIN_ROOT}/config.py"
 ```
 
 Roda num instante, não chama a API e não gasta crédito. Imprime de onde veio a
@@ -95,7 +96,7 @@ a skill `video-aula` gera slides com diagramas sincronizados com a fala.
 | Pedido | Comando |
 | --- | --- |
 | Ler um documento técnico | escreva o roteiro falado e narre o roteiro |
-| Ler um arquivo de prosa | `python "<raiz>/speak.py" docs/notas.md` |
+| Ler um arquivo de prosa | `python3 "<raiz>/speak.py" docs/notas.md` |
 | Ler um texto seu, escrito na hora | `... /speak.py --text "o deploy terminou"` |
 | Ler algo longo, ou com aspas e acentos | salve num arquivo do scratchpad e passe o caminho |
 | Guardar o áudio | já é o padrão: fica em `out/` e no histórico |
@@ -103,7 +104,7 @@ a skill `video-aula` gera slides com diagramas sincronizados com a fala.
 | Só gerar, sem tocar | `... /speak.py notas.md --no-play --out saida.mp3` |
 | Ver o que será falado e a config | `... /speak.py notas.md --dry-run` |
 | Ver vozes da conta | `... /speak.py --list-voices` |
-| Conferir chave e voz configuradas | `python "<raiz>/config.py"` |
+| Conferir chave e voz configuradas | `python3 "<raiz>/config.py"` |
 
 ## Regras
 
