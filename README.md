@@ -45,8 +45,9 @@ cada parte do diagrama acende no instante em que é dito, usando os tempos por
 caractere que a ElevenLabs devolve no endpoint `with-timestamps`. A página sai
 com o áudio embutido, pronta para publicar.
 
-**Narração automática** (opcional, desligada): o hook `Stop` narra a resposta
-assim que o Claude termina de responder.
+**Narração automática** (opcional, desligada): ao fim de cada resposta de
+substância, o Claude escreve um roteiro falado dela e narra o roteiro, do mesmo
+jeito que faria com um documento.
 
 ```
 narrar.cmd on     liga
@@ -54,10 +55,10 @@ narrar.cmd off    desliga
 narrar.cmd        mostra o estado
 ```
 
-O gatilho é o arquivo `~/.claude/narrador/narrar-respostas`: sem ele o hook sai
-na hora, sem chamar a API. Roda com `async`, trunca em 1200 caracteres
-(`NARRAR_MAX_CHARS` muda), ignora respostas com menos de 15 caracteres, e cada
-resposta narrada consome créditos.
+O gatilho é o arquivo `~/.claude/narrador/narrar-respostas`: quando ele existe, o
+hook `SessionStart` injeta a instrução; sem ele, sai calado. Como a leitura é no
+começo da sessão, ligar ou desligar vale a partir da próxima. Confirmação curta e
+resposta de uma linha não viram áudio, e cada narração consome créditos.
 
 ## Uso direto, sem o Claude
 
@@ -132,6 +133,6 @@ ajustar figura ou layout e regerar não consome créditos.
 | `aula.py`, `aula_template.html` | vídeo-aula com slides sincronizados |
 | `mp3.py` | limpeza e medição dos trechos de áudio |
 | `config.py` | onde ficam chave, saída e cache, e a checagem da configuração |
-| `hooks/` | hook `Stop` da narração automática e `SessionStart` que semeia o `.env` |
+| `hooks/` | dois `SessionStart`: um semeia o `.env`, o outro liga a narração automática |
 | `skills/` | as duas skills que o Claude carrega |
 | `roteiros/` | a aula sobre o próprio plugin, e as figuras de referência |

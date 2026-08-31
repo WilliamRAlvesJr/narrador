@@ -45,8 +45,8 @@ figura: figuras/roteiro.svg
 
 ## Narração automática
 figura: figuras/narracao-automatica.svg
-- Um gatilho no fim da resposta :: Existe um gancho que dispara quando eu termino de responder e narra a resposta inteira.
-- Desligado por padrão :: Ele só age enquanto um arquivo específico existir na pasta do projeto. Um comando liga, outro desliga.
+- Também vale para o que eu respondo :: Ligado o modo automático, no fim de cada resposta eu escrevo um roteiro dela e narro o roteiro, nunca o texto da tela.
+- Desligado por padrão :: Ele só age enquanto um arquivo específico existir na pasta de dados. Um comando liga, outro desliga, e vale da próxima sessão em diante.
 - Custa créditos :: Fica desligado porque cada resposta narrada consome créditos da sua conta.
 
 ## Esta aula

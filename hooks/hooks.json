@@ -1,21 +1,5 @@
 {
   "hooks": {
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python",
-            "args": [
-              "${CLAUDE_PLUGIN_ROOT}/hooks/speak_reply.py"
-            ],
-            "async": true,
-            "timeout": 600,
-            "statusMessage": "Narrando a resposta..."
-          }
-        ]
-      }
-    ],
     "SessionStart": [
       {
         "hooks": [
@@ -24,6 +8,14 @@
             "command": "python",
             "args": [
               "${CLAUDE_PLUGIN_ROOT}/hooks/semear_env.py"
+            ],
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "python",
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/hooks/narrar_respostas.py"
             ],
             "timeout": 10
           }

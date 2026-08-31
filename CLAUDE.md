@@ -24,7 +24,7 @@ ou a raiz derivada do "Base directory for this skill".
 | `aula_template.html` | layout e player da aula |
 | `mp3.py` | limpeza de ID3/Xing e duração por contagem de frames |
 | `config.py` | pasta de dados, `.env`, saída e cache; `python config.py` checa a configuração |
-| `hooks/speak_reply.py` | hook `Stop`, ligado pelo arquivo sentinela |
+| `hooks/narrar_respostas.py` | hook `SessionStart`: manda narrar um roteiro de cada resposta, ligado pelo arquivo sentinela |
 | `hooks/semear_env.py` | hook `SessionStart`: copia o `.env.example` para a pasta de dados na primeira vez |
 
 ## Armadilhas que já custaram caro
@@ -37,6 +37,11 @@ ou a raiz derivada do "Base directory for this skill".
 - **ID3 e frame Xing na emenda.** Cada resposta da API é um MP3 completo; sem
   `mp3.limpar` o player adota o Xing do primeiro trecho como duração do arquivo e
   recusa seek adiante. `aula.py` avisa quando a emenda medida diverge da soma.
+- **Narrar a resposta crua.** A narração automática já foi um hook `Stop` que
+  mandava a resposta pronta para a API: sem modelo no caminho, caminho de arquivo
+  e nome de variável iam para o áudio como estão. Hoje o hook só injeta a
+  instrução; quem escreve o roteiro é o Claude. Nenhum hook deste plugin deve
+  voltar a sintetizar texto que ninguém reescreveu para o ouvido.
 - **Break tags desalinham a aula.** Ritmo na vídeo-aula é controle do player
   (velocidade, pausa, volume), nunca da gravação.
 - **Chave vazia no `.env`.** O arquivo semeado vem com `ELEVENLABS_API_KEY=`
