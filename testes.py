@@ -558,6 +558,41 @@ class TestPlayerUnix(unittest.TestCase):
         self.assertFalse(nomes & {"aplay", "paplay", "aucat"})
 
 
+class TestVolume(unittest.TestCase):
+    def calado(self, valor):
+        with contextlib.redirect_stderr(io.StringIO()) as saida:
+            return tocador.ler_volume(valor), saida.getvalue()
+
+    def test_valor_valido(self):
+        self.assertEqual(tocador.ler_volume("0.4"), 0.4)
+
+    def test_sem_valor_e_volume_cheio(self):
+        self.assertEqual(tocador.ler_volume(""), 1.0)
+
+    def test_valor_torto_avisa_e_nao_derruba_a_narracao(self):
+        """O audio ja foi pago: recusar a reproducao aqui seria o pior desfecho."""
+        for valor in ("alto", "3", "-1"):
+            volume, aviso = self.calado(valor)
+            self.assertEqual(volume, 1.0)
+            self.assertIn("NARRADOR_VOLUME", aviso)
+
+    def test_cada_player_recebe_na_sua_escala(self):
+        self.assertEqual(tocador.com_volume(["mpv", "--no-video"], 0.5),
+                         ["mpv", "--no-video", "--volume=50"])
+        self.assertEqual(tocador.com_volume(["mpg123", "-q"], 0.5),
+                         ["mpg123", "-q", "-f", "16384"])
+
+    def test_volume_cheio_nao_mexe_no_comando(self):
+        self.assertEqual(tocador.com_volume(["mpv"], 1.0), ["mpv"])
+
+    def test_player_sem_flag_conhecida_toca_como_veio(self):
+        self.assertEqual(tocador.com_volume(["gst-play-1.0"], 0.5), ["gst-play-1.0"])
+
+    def test_a_tabela_so_fala_de_player_da_lista(self):
+        nomes = {comando[0] for comando in tocador.PLAYERS_UNIX}
+        self.assertLessEqual(set(tocador.VOLUME_UNIX), nomes)
+
+
 class TestUltimoRecurso(unittest.TestCase):
     """Sem player instalado, o audio ainda vai para o programa padrao do sistema."""
 

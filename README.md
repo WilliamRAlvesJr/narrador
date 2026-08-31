@@ -149,6 +149,14 @@ mesmo documento não gasta crédito de novo, e `--no-cache` força a síntese. A
 chave cobre texto, voz, modelo, formato, velocidade, idioma e os trechos
 vizinhos, que a API recebe para não quebrar a prosódia na emenda.
 
+Volume: `NARRADOR_VOLUME=0.5` no `.env` reduz a reprodução pela metade. É
+ajuste do player, não da síntese, então o arquivo continua no volume original e o
+cache não é invalidado. No Windows vai para o `MediaPlayer`; em macOS e Linux,
+para a flag do player que tocar (`mpv`, `mpg123`, `ffplay`, `cvlc`, `pw-play`,
+`play` e `afplay`; o `gst-play-1.0` toca cheio). Valor fora de 0 a 1 não derruba a
+narração já sintetizada: sai um aviso e toca no volume cheio. Na vídeo-aula o
+volume é do player da página, e no `replay`, do programa de áudio do sistema.
+
 A velocidade é validada antes de qualquer chamada: fora de 0.7 a 1.2, ou com
 valor que não é número, o script sai com uma linha dizendo o que corrigir, em vez
 de mandar o texto inteiro e receber um 422 da API.
@@ -206,7 +214,7 @@ então ajustar figura ou layout e regerar não consome créditos.
 python3 testes.py
 ```
 
-São 71, só stdlib, sem rede e sem chave: a síntese é substituída por uma função
+São 78, só stdlib, sem rede e sem chave: a síntese é substituída por uma função
 de mentira e o MP3 dos testes é montado frame a frame. Cobrem extração,
 chunking, pausas, emenda, cache, velocidade, histórico, roteiro da aula, leitura
 do `.env`, o interruptor e a barra de estado.

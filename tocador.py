@@ -25,6 +25,7 @@ PLAYER = """
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName presentationCore
 $player = New-Object System.Windows.Media.MediaPlayer
+$player.Volume = {volume}
 $player.Open([uri]'{uri}')
 $deadline = (Get-Date).AddSeconds(15)
 while (-not $player.NaturalDuration.HasTimeSpan -and (Get-Date) -lt $deadline) {{
@@ -56,6 +57,45 @@ PLAYERS_UNIX = (
 
 NOMES = ", ".join(comando[0] for comando in PLAYERS_UNIX[1:])  # o afplay ja vem no macOS
 
+# Cada player recebe o volume na sua propria escala; quem nao esta aqui toca no
+# volume em que o audio foi gerado. mpg123 conta em fracoes de 32768.
+VOLUME_UNIX = {
+    "afplay": lambda v: ["-v", f"{v:.2f}"],
+    "mpv": lambda v: [f"--volume={round(v * 100)}"],
+    "mpg123": lambda v: ["-f", str(round(v * 32768))],
+    "ffplay": lambda v: ["-volume", str(round(v * 100))],
+    "cvlc": lambda v: [f"--gain={v:.2f}"],
+    "pw-play": lambda v: [f"--volume={v:.2f}"],
+    "play": lambda v: ["-v", f"{v:.2f}"],
+}
+
+
+def ler_volume(valor: str | float | None = None) -> float:
+    """De 0 a 1, do NARRADOR_VOLUME ou do que vier.
+
+    Valor torto nao derruba a narracao: o audio ja foi sintetizado e pago, entao
+    o certo e avisar e tocar no volume cheio.
+    """
+    bruto = os.environ.get("NARRADOR_VOLUME") if valor is None else valor
+    if bruto is None or str(bruto).strip() == "":
+        return 1.0
+    try:
+        volume = float(bruto)
+    except (TypeError, ValueError):
+        volume = -1.0
+    if not 0.0 <= volume <= 1.0:
+        print(f"[aviso] NARRADOR_VOLUME={bruto!r} ignorado: use um numero de 0 a 1.",
+              file=sys.stderr)
+        return 1.0
+    return volume
+
+
+def com_volume(comando: list[str], volume: float) -> list[str]:
+    """O comando do player com o volume dele, antes do arquivo."""
+    if volume >= 1.0:
+        return comando
+    return comando + VOLUME_UNIX.get(comando[0], lambda _: [])(volume)
+
 
 def players_disponiveis(existe=shutil.which) -> list[list[str]]:
     """Os players instalados nesta maquina, na ordem de preferencia."""
@@ -71,7 +111,7 @@ def tocar(caminho: Path) -> None:
 
 
 def tocar_no_windows(caminho: Path) -> None:
-    script = PLAYER.format(uri=caminho.resolve().as_uri())
+    script = PLAYER.format(uri=caminho.resolve().as_uri(), volume=f"{ler_volume():.2f}")
     feito = subprocess.run(
         ["powershell", "-NoProfile", "-NonInteractive", "-Command", script],
         capture_output=True, text=True,
@@ -82,10 +122,11 @@ def tocar_no_windows(caminho: Path) -> None:
 
 
 def tocar_no_unix(caminho: Path) -> None:
+    volume = ler_volume()
     for comando in players_disponiveis():
         try:
             # sem stdin: player nenhum daqui le teclado, e mpv e gst-play leriam
-            subprocess.run(comando + [str(caminho)], check=True,
+            subprocess.run(com_volume(comando, volume) + [str(caminho)], check=True,
                            stdin=subprocess.DEVNULL,
                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             return
