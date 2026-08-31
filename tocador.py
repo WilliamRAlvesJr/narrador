@@ -12,6 +12,7 @@ Nao confundir com o player da video-aula, que e o JavaScript do aula_template.
 from __future__ import annotations
 
 import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -35,7 +36,24 @@ $player.Stop()
 $player.Close()
 """
 
-PLAYERS_UNIX = (["afplay"], ["mpv", "--no-video"], ["ffplay", "-nodisp", "-autoexit"])
+# Da esquerda para a direita, o primeiro que existir toca. Todos precisam sair
+# sozinhos no fim do audio e nao abrir janela: quem so entende WAV, como o
+# paplay, fica de fora, porque a narracao e sempre MP3.
+PLAYERS_UNIX = (
+    ["afplay"],
+    ["mpv", "--no-video", "--no-terminal"],
+    ["mpg123", "-q"],
+    ["ffplay", "-nodisp", "-autoexit", "-loglevel", "error"],
+    ["cvlc", "--play-and-exit", "--intf", "dummy"],
+    ["gst-play-1.0", "--quiet"],
+    ["pw-play"],
+    ["play", "-q"],
+)
+
+
+def players_disponiveis(existe=shutil.which) -> list[list[str]]:
+    """Os players instalados nesta maquina, na ordem de preferencia."""
+    return [comando for comando in PLAYERS_UNIX if existe(comando[0])]
 
 
 def tocar(caminho: Path) -> None:
@@ -51,14 +69,18 @@ def tocar(caminho: Path) -> None:
                   file=sys.stderr)
         return
 
-    for comando in PLAYERS_UNIX:
+    for comando in players_disponiveis():
         try:
+            # sem stdin: player nenhum daqui le teclado, e mpv e gst-play leriam
             subprocess.run(comando + [str(caminho)], check=True,
+                           stdin=subprocess.DEVNULL,
                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             return
-        except (FileNotFoundError, subprocess.CalledProcessError):
+        except (OSError, subprocess.CalledProcessError):
             continue
-    print(f"[aviso] nenhum player encontrado; audio salvo em {caminho}", file=sys.stderr)
+    nomes = ", ".join(comando[0] for comando in PLAYERS_UNIX[1:])
+    print(f"[aviso] nenhum player tocou o audio, que esta em {caminho}. "
+          f"Instale um destes: {nomes}.", file=sys.stderr)
 
 
 def abrir_no_sistema(caminho: Path) -> None:

@@ -28,6 +28,7 @@ import historico  # noqa: E402
 import mp3  # noqa: E402
 import narrar  # noqa: E402
 import speak  # noqa: E402
+import tocador  # noqa: E402
 
 # --------------------------------------------------------------------------- #
 # MP3 de mentira: MPEG-1 Layer III, 128 kbps, 44100 Hz, sem padding
@@ -538,6 +539,21 @@ class TestAbrir(unittest.TestCase):
             saida = self.rodar(pasta, "--abrir", "1")
             self.assertEqual(saida.returncode, 1)
             self.assertIn("saiu do disco", saida.stdout + saida.stderr)
+
+
+class TestPlayerUnix(unittest.TestCase):
+    def test_escolhe_o_primeiro_instalado(self):
+        instalados = {"cvlc", "mpg123"}
+        escolhidos = tocador.players_disponiveis(existe=lambda n: n in instalados)
+        self.assertEqual([c[0] for c in escolhidos], ["mpg123", "cvlc"])
+
+    def test_maquina_pelada_nao_tem_player(self):
+        self.assertEqual(tocador.players_disponiveis(existe=lambda n: None), [])
+
+    def test_nada_que_so_toque_wav(self):
+        """A narracao e sempre MP3: aplay e paplay tocariam silencio ou erro."""
+        nomes = {comando[0] for comando in tocador.PLAYERS_UNIX}
+        self.assertFalse(nomes & {"aplay", "paplay", "aucat"})
 
 
 class TestInterpretadorPortavel(unittest.TestCase):

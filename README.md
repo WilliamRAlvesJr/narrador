@@ -30,10 +30,11 @@ Requisitos: Python 3.10+, com o interpretador no PATH. Os comandos deste README
 usam `python3`; em máquinas Windows onde só existe `python`, é esse o nome. O hook
 do plugin resolve os dois sozinho.
 
-A reprodução no Windows usa `System.Windows.Media.MediaPlayer` via PowerShell; em
-macOS e Linux tenta `afplay`, `mpv` e `ffplay`, nessa ordem, e sem nenhum deles o
-áudio é apenas salvo. `replay` abre o arquivo no `open` (macOS) ou no `xdg-open`
-(Linux).
+A reprodução no Windows usa `System.Windows.Media.MediaPlayer` via PowerShell. Em
+macOS e Linux vale o primeiro player instalado, nesta ordem: `afplay`, `mpv`,
+`mpg123`, `ffplay`, `cvlc`, `gst-play-1.0`, `pw-play`, `play`. Sem nenhum deles o
+áudio é só salvo, e o aviso diz o que instalar; num Linux pelado, `mpg123` é o
+mais leve. `replay` abre o arquivo no `open` (macOS) ou no `xdg-open` (Linux).
 
 Nada do que você mantém fica dentro do plugin, que é reescrito a cada
 atualização: chave, áudio, histórico e cache moram em `~/.claude/narrador/`
@@ -196,7 +197,7 @@ então ajustar figura ou layout e regerar não consome créditos.
 python3 testes.py
 ```
 
-São 61, só stdlib, sem rede e sem chave: a síntese é substituída por uma função
+São 64, só stdlib, sem rede e sem chave: a síntese é substituída por uma função
 de mentira e o MP3 dos testes é montado frame a frame. Cobrem extração,
 chunking, pausas, emenda, cache, velocidade, histórico, roteiro da aula, leitura
 do `.env`, o interruptor e a barra de estado.

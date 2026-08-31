@@ -34,7 +34,7 @@ ou a raiz derivada do "Base directory for this skill".
 | `hooks/semear_env.py` | hook `SessionStart`: semeia o `.env` e atualiza a cópia do `statusline.py` |
 | `hooks/narrar_respostas.py` | hook `SessionStart`: manda narrar um roteiro de cada resposta, ligado pelo arquivo sentinela |
 
-Rode `python3 testes.py` antes de commitar: 61 testes, alguns segundos, nenhuma
+Rode `python3 testes.py` antes de commitar: 64 testes, alguns segundos, nenhuma
 chamada à API.
 
 ## Quem manda no áudio
@@ -101,6 +101,11 @@ chamada à API.
 - **Histórico podado.** Guardar o áudio é o padrão, então `historico` mantém as
   últimas `NARRADOR_HISTORICO_MAX` (50) narrações e apaga o som das que saem.
   Quem gravar áudio por outro caminho registra e poda junto.
+- **O player do Unix é MP3, e sai sozinho.** `PLAYERS_UNIX` só aceita programa
+  que decodifica MP3, termina no fim do áudio e não abre janela: `paplay` e
+  `aplay` ficam de fora por só entenderem WAV. `players_disponiveis` filtra
+  pelo `shutil.which`, e a chamada vai sem stdin, senão mpv e gst-play comem a
+  entrada do processo que pediu a narração.
 - **Break tags desalinham a aula.** Ritmo na vídeo-aula é controle do player da
   página, nunca da gravação.
 
