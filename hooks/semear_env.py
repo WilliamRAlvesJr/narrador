@@ -8,8 +8,9 @@ avisa o Claude para pedir a chave. Sem nada a fazer, sai calado: o stdout do
 hook entra no contexto da sessao.
 
 Tambem atualiza a copia do statusline.py, que a barra de estado do usuario
-executa por um caminho estavel, fora do cache versionado do plugin. Isso e
-sempre silencioso: quem nao configurou a barra nao precisa saber.
+executa por um caminho estavel, fora do cache versionado do plugin. A copia e
+sempre silenciosa; o convite para ligar a barra sai junto do pedido da chave,
+que e a unica vez que este hook fala.
 """
 
 from __future__ import annotations
@@ -32,6 +33,10 @@ def main() -> None:
         "O plugin so narra depois que o usuario preencher ELEVENLABS_API_KEY "
         "nesse arquivo; avise isso quando ele pedir uma narracao ou uma aula."
     )
+    sugestao = config.sugestao_da_statusline()
+    if sugestao:
+        print(f"[narrador] Ofereca tambem, uma vez so, a barra de estado. "
+              f"Quem cola no settings e o usuario.\n{sugestao}")
 
 
 if __name__ == "__main__":

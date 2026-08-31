@@ -592,6 +592,32 @@ class TestUltimoRecurso(unittest.TestCase):
         self.assertIn("narracao.mp3", saida.getvalue())
 
 
+class TestPrimeiraSessao(unittest.TestCase):
+    """O hook SessionStart fala uma vez: quando semeia o .env."""
+
+    def rodar(self, pasta: str, casa: str):
+        ambiente = dict(os.environ, NARRADOR_HOME=pasta, HOME=casa, USERPROFILE=casa)
+        ambiente.pop("ELEVENLABS_API_KEY", None)
+        return subprocess.run(
+            [sys.executable, str(RAIZ / "hooks" / "semear_env.py")],
+            capture_output=True, text=True, encoding="utf-8", env=ambiente,
+        ).stdout
+
+    def test_pede_a_chave_e_oferece_a_barra(self):
+        with tempfile.TemporaryDirectory() as pasta, \
+                tempfile.TemporaryDirectory() as casa:
+            saida = self.rodar(pasta, casa)
+            self.assertIn("ELEVENLABS_API_KEY", saida)
+            self.assertIn("statusLine", saida)
+
+    def test_sessao_seguinte_sai_calada(self):
+        """O stdout do hook entra no contexto de toda sessao: falar duas vezes e ruido."""
+        with tempfile.TemporaryDirectory() as pasta, \
+                tempfile.TemporaryDirectory() as casa:
+            self.rodar(pasta, casa)
+            self.assertEqual(self.rodar(pasta, casa).strip(), "")
+
+
 class TestTela(unittest.TestCase):
     def teste_com(self, **ambiente) -> bool:
         guardado = dict(os.environ)
