@@ -11,6 +11,8 @@ audio gravado nem da maquina de quem roda.
 
 from __future__ import annotations
 
+import contextlib
+import io
 import json
 import os
 import subprocess
@@ -554,6 +556,59 @@ class TestPlayerUnix(unittest.TestCase):
         """A narracao e sempre MP3: aplay e paplay tocariam silencio ou erro."""
         nomes = {comando[0] for comando in tocador.PLAYERS_UNIX}
         self.assertFalse(nomes & {"aplay", "paplay", "aucat"})
+
+
+class TestUltimoRecurso(unittest.TestCase):
+    """Sem player instalado, o audio ainda vai para o programa padrao do sistema."""
+
+    def setUp(self):
+        self.disponiveis = tocador.players_disponiveis
+        self.abrir = tocador.abrir_no_sistema
+        self.entregue = []
+        tocador.players_disponiveis = lambda **_: []
+
+    def tearDown(self):
+        tocador.players_disponiveis = self.disponiveis
+        tocador.abrir_no_sistema = self.abrir
+
+    def responder(self, aberto: bool):
+        def falso(caminho):
+            self.entregue.append(caminho)
+            return aberto
+        tocador.abrir_no_sistema = falso
+
+    def test_entrega_ao_programa_do_sistema(self):
+        self.responder(True)
+        with contextlib.redirect_stderr(io.StringIO()) as saida:
+            tocador.tocar_no_unix(Path("narracao.mp3"))
+        self.assertEqual(self.entregue, [Path("narracao.mp3")])
+        self.assertIn("nao para junto com esta tarefa", saida.getvalue())
+
+    def test_sem_ninguem_para_tocar_o_aviso_diz_o_que_instalar(self):
+        self.responder(False)
+        with contextlib.redirect_stderr(io.StringIO()) as saida:
+            tocador.tocar_no_unix(Path("narracao.mp3"))
+        self.assertIn("mpg123", saida.getvalue())
+        self.assertIn("narracao.mp3", saida.getvalue())
+
+
+class TestTela(unittest.TestCase):
+    def teste_com(self, **ambiente) -> bool:
+        guardado = dict(os.environ)
+        os.environ.pop("DISPLAY", None)
+        os.environ.pop("WAYLAND_DISPLAY", None)
+        os.environ.update(ambiente)
+        try:
+            return tocador.tem_tela()
+        finally:
+            os.environ.clear()
+            os.environ.update(guardado)
+
+    def test_sem_display_nao_tem_para_onde_abrir(self):
+        self.assertFalse(self.teste_com())
+
+    def test_wayland_tambem_conta(self):
+        self.assertTrue(self.teste_com(WAYLAND_DISPLAY="wayland-0"))
 
 
 class TestInterpretadorPortavel(unittest.TestCase):

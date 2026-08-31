@@ -41,3 +41,9 @@ deste lado, e nenhum crédito foi gasto.
 
 Se a saída disser que o áudio saiu do disco, repasse isso: o histórico guarda as
 últimas 50 narrações e apaga o som das que saem.
+
+O comando sai com erro quando nada abriu, e o aviso diz o motivo: sem programa
+associado ao MP3, sem `xdg-open`, ou sessão sem tela. Nunca diga que está tocando
+nesse caso; repasse o motivo e o caminho do arquivo. Num Linux assim, instalar um
+player de linha de comando (`mpg123` é o mais leve) resolve também a narração
+normal.

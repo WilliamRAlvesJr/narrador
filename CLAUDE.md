@@ -34,7 +34,7 @@ ou a raiz derivada do "Base directory for this skill".
 | `hooks/semear_env.py` | hook `SessionStart`: semeia o `.env` e atualiza a cópia do `statusline.py` |
 | `hooks/narrar_respostas.py` | hook `SessionStart`: manda narrar um roteiro de cada resposta, ligado pelo arquivo sentinela |
 
-Rode `python3 testes.py` antes de commitar: 64 testes, alguns segundos, nenhuma
+Rode `python3 testes.py` antes de commitar: 69 testes, alguns segundos, nenhuma
 chamada à API.
 
 ## Quem manda no áudio
@@ -42,6 +42,11 @@ chamada à API.
 - **A narração roda em segundo plano** (`run_in_background`), e o player é
   processo filho dessa tarefa: encerrar a tarefa no Claude Code encerra o som.
   É assim que o usuário pede silêncio.
+- **Sem player instalado, o som ainda sai.** `tocar_no_unix` cai no programa
+  padrão de MP3 da máquina, e avisa que a partir daí encerrar a tarefa não cala
+  mais o som. Silêncio calado é o pior desfecho: cada saída sem áudio (sem
+  `xdg-open`, sem programa associado, sessão sem tela) sai com o aviso que diz o
+  que fazer, e `abrir_no_sistema` devolve `False` para quem chamou.
 - **A reprodução com controles é a do sistema.** `--abrir` entrega o arquivo do
   histórico ao programa de áudio do computador e retorna na hora; pausa, barra e
   volume são de lá.

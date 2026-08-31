@@ -360,8 +360,10 @@ def main() -> None:
         caminho = Path(anotado["arquivo"])
         if not caminho.is_file():
             sys.exit(f"O audio de {anotado['quando']} ja saiu do disco.")
-        tocador.abrir_no_sistema(caminho)
+        aberto = tocador.abrir_no_sistema(caminho)
         print(f"{anotado['quando']}  {anotado['origem']}  ->  {caminho}")
+        if not aberto:
+            sys.exit("Nao abriu no programa de audio: o aviso acima diz o que falta.")
         return
 
     source = args.text if args.text is not None else args.source
