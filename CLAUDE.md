@@ -25,9 +25,12 @@ ou a raiz derivada do "Base directory for this skill".
 | `aula_template.html` | layout e player da aula |
 | `mp3.py` | limpeza de ID3/Xing e duração por contagem de frames |
 | `config.py` | pasta de dados, `.env`, saída e cache; `python config.py` checa a configuração |
+| `tocador.py` | reprodução: script do player, teclado, e o PID que permite parar |
+| `historico.py` | uma linha JSON por narração, com poda do áudio antigo |
 | `narrar.py` | interruptor da narração automática: sentinela, e o texto da instrução que o hook e a skill injetam |
 | `statusline.py` | barra de estado do Claude Code; autocontido, roda da cópia em `~/.claude/narrador/` |
 | `hooks/narrar_respostas.py` | hook `SessionStart`: manda narrar um roteiro de cada resposta, ligado pelo arquivo sentinela |
+| `testes.py` | `python testes.py`: stdlib, sem rede, com a síntese trocada por uma função de mentira |
 | `hooks/semear_env.py` | hook `SessionStart`: copia o `.env.example` para a pasta de dados na primeira vez |
 
 ## Armadilhas que já custaram caro
@@ -39,7 +42,10 @@ ou a raiz derivada do "Base directory for this skill".
   `eleven_turbo_v2_5`; ao trocar de modelo, o campo é omitido sozinho.
 - **ID3 e frame Xing na emenda.** Cada resposta da API é um MP3 completo; sem
   `mp3.limpar` o player adota o Xing do primeiro trecho como duração do arquivo e
-  recusa seek adiante. `aula.py` avisa quando a emenda medida diverge da soma.
+  recusa seek adiante. `aula.py` avisa quando a emenda medida diverge da soma, e
+  `speak.emendar` limpa os trechos do texto que virou vários chunks. Quem escrever
+  outra emenda de áudio passa por ali também: um trecho só fica intocado, porque
+  o Xing dele já descreve o arquivo certo.
 - **Ligar a narração sem valer na sessão.** A instrução entra pelo
   `SessionStart`: criar a sentinela no meio da sessão não muda nada, e apagá-la
   não revoga o que já está no contexto. Quem liga ou desliga precisa imprimir
@@ -55,13 +61,27 @@ ou a raiz derivada do "Base directory for this skill".
   seguinte. Por isso a barra de estado aponta para a cópia em
   `~/.claude/narrador/`, que o hook reescreve quando o plugin muda, e o
   `statusline.py` é autocontido: rodando de lá, ele não tem o `config.py` ao lado.
+- **Parar sem PID não existe.** A narração começa dentro de um turno do Claude e
+  o usuário pede silêncio em outro: por isso quem toca anota o PID em
+  `tocando.json`, e `tocador.vivo` confere o nome do processo antes de matar,
+  porque o sistema recicla número de PID. Interrupção proposital não imprime
+  aviso de falha do player.
+- **Teclado só existe no terminal do usuário.** O player com controles usa
+  `[Console]::KeyAvailable`, que estoura quando a entrada é redirecionada. Por
+  isso `tocador.ha_teclado` decide, e a sessão do Claude cai sempre no player
+  simples.
 - **Break tags desalinham a aula.** Ritmo na vídeo-aula é controle do player
   (velocidade, pausa, volume), nunca da gravação.
 - **Chave vazia no `.env`.** O arquivo semeado vem com `ELEVENLABS_API_KEY=`
   em branco; por isso `carregar_env` ignora valor vazio, senão ele venceria o
   `.env` da raiz do plugin no fallback de desenvolvimento e a chave sumiria.
 - **Cache por conteúdo.** A chave inclui texto, voz, modelo, formato, velocidade
-  e idioma. Ao mudar como a síntese é pedida, invalide o cache junto.
+  e idioma, e na leitura em voz alta também os trechos vizinhos, que mudam a
+  prosódia. Ao mudar como a síntese é pedida, invalide o cache junto.
+- **Velocidade só validada pela API.** Um `ELEVENLABS_SPEED` fora de 0.7 a 1.2
+  custava um 422 depois do texto inteiro enviado, e um valor não numérico
+  rebentava com traceback. `speak.ler_velocidade` é o único caminho: quem ler essa
+  variável em outro lugar passa por ela.
 
 ## Ao mexer no player
 

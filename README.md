@@ -89,17 +89,32 @@ narração consome créditos.
 python speak.py notas.md              # extrai, sintetiza e toca
 python speak.py --text "bom dia"
 type notas.txt | python speak.py -
-python speak.py notas.md --keep       # mantém o mp3 em ~/.claude/narrador/out
 python speak.py notas.md --dry-run    # mostra o texto extraído e a config
 python speak.py --list-voices
+
+python speak.py --parar               # corta a narração que está tocando
+python speak.py --replay              # toca de novo a última, sem gastar crédito
+python speak.py --replay 3            # a terceira mais recente
+python speak.py --historico           # lista as últimas narrações
 
 python aula.py roteiros\narrador.aula.md --dry-run
 python aula.py roteiros\narrador.aula.md
 ```
 
 Flags de `speak.py`: `--as md|html|txt`, `--voice`, `--model`, `--format`,
-`--speed`, `--language`, `--pause`, `--out`, `--keep`, `--no-play`, `--dry-run`,
-`--list-voices`.
+`--speed`, `--language`, `--pause`, `--out`, `--no-play`, `--dry-run`,
+`--no-cache`, `--sem-historico`, `--controles`, `--historico`, `--replay`,
+`--parar`, `--list-voices`.
+
+Cada trecho sintetizado fica em cache por conteúdo em `~/.claude/narrador/cache-audio/`,
+a mesma pasta que a vídeo-aula usa: reler o mesmo documento não gasta crédito de
+novo, e `--no-cache` força a síntese. A chave cobre texto, voz, modelo, formato,
+velocidade, idioma e os trechos vizinhos, que a API recebe para não quebrar a
+prosódia na emenda.
+
+A velocidade é validada antes de qualquer chamada: fora de 0.7 a 1.2, ou com
+valor que não é número, o script sai com uma linha dizendo o que corrigir, em vez
+de mandar o texto inteiro e receber um 422 da API.
 
 Voz padrão: `JBFqnCBsd6RMkjVDRZzb` (George, a do quickstart da ElevenLabs).
 Modelo padrão: `eleven_turbo_v2_5`, o da família v2 que aceita `language_code`;
@@ -117,8 +132,12 @@ termos em inglês sai lido com sotaque errado. Ao trocar de modelo o script omit
 3. **Pausas** (só na leitura em voz alta): `ELEVENLABS_SENTENCE_PAUSE=2` vira
    `.<break time="2.0s" />` após cada ponto final de frase, máximo 3 s. Decimais
    e o ponto que encerra o texto são ignorados.
-4. **Reprodução**: toca e apaga o temporário, salvo com `--keep` ou `--out`. Erro
-   da API não deixa arquivo vazio: o destino só é escrito no fim.
+4. **Emenda**: texto que virou vários chunks vira um MP3 só, com os cabeçalhos
+   ID3 e Xing de cada trecho removidos. Sem isso o arquivo declara a duração do
+   primeiro chunk e o player recusa seek adiante. Trecho único fica como veio.
+5. **Reprodução**: o áudio fica em `out/`, anotado no histórico, e toca. Com
+   `--sem-historico` ele volta a ser temporário e some depois de tocado. Erro da
+   API não deixa arquivo vazio: o destino só é escrito no fim.
 
 ## A vídeo-aula
 
@@ -148,16 +167,43 @@ emendar e a duração é contada frame a frame.
 O áudio fica em cache por conteúdo em `~/.claude/narrador/cache-audio/`, então
 ajustar figura ou layout e regerar não consome créditos.
 
+## Controles e histórico
+
+Toda narração fica em `~/.claude/narrador/out/`, anotada em `historico.jsonl`
+com data, origem, duração e a voz usada. `--historico` lista, `--replay` toca de
+novo sem chamar a API, e `--parar` corta o que estiver tocando, mesmo que o áudio
+tenha sido começado por outra sessão do Claude. O histórico guarda as últimas 50
+narrações (`NARRADOR_HISTORICO_MAX` muda o número) e apaga o áudio do que sai.
+
+Rodando no seu terminal, a reprodução aceita teclado: espaço pausa e retoma, ←
+e → pulam 5 s, ↑ e ↓ mudam o volume, q encerra. Numa sessão do Claude não há
+teclado, então o áudio corre até o fim ou até um `--parar`; `--controles` e
+`--no-controles` forçam um ou outro modo.
+
+## Testes
+
+```
+python testes.py
+```
+
+Só stdlib, sem rede e sem chave: a síntese é substituída por uma função de
+mentira e o MP3 dos testes é montado frame a frame. Cobre extração, chunking,
+pausas, emenda, cache, velocidade, roteiro da aula, leitura do `.env`, o
+interruptor e a barra de estado.
+
 ## Estrutura
 
 | Caminho | Papel |
 | --- | --- |
 | `speak.py` | leitura em voz alta |
 | `aula.py`, `aula_template.html` | vídeo-aula com slides sincronizados |
-| `mp3.py` | limpeza e medição dos trechos de áudio |
+| `mp3.py` | limpeza e medição dos trechos de áudio, na leitura e na aula |
 | `config.py` | onde ficam chave, saída e cache, e a checagem da configuração |
 | `narrar.py` | liga e desliga a narração automática |
 | `statusline.py` | a barra de estado: pasta, modelo e se a narração está ligada |
 | `hooks/` | dois `SessionStart`: um semeia o `.env`, o outro liga a narração automática |
 | `skills/` | as três skills que o Claude carrega |
+| `tocador.py` | reprodução com teclado, e a parada de fora |
+| `historico.py` | o que foi narrado, e o áudio para ouvir de novo |
+| `testes.py` | a suíte, sem rede e sem chave |
 | `roteiros/` | a aula sobre o próprio plugin, e as figuras de referência |

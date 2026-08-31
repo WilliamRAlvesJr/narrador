@@ -8,11 +8,11 @@ Nao depende de pacotes externos: usa apenas a stdlib.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import html
 import json
 import os
 import re
-import subprocess
 import sys
 import tempfile
 import time
@@ -24,8 +24,12 @@ API_BASE = "https://api.elevenlabs.io/v1"
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT))
 import config  # noqa: E402
+import historico  # noqa: E402
+import mp3  # noqa: E402
+import tocador  # noqa: E402
 
 OUT_DIR = config.OUT_DIR
+CACHE_DIR = config.CACHE_DIR
 
 DEFAULT_VOICE = "JBFqnCBsd6RMkjVDRZzb"  # George, voz do quickstart da ElevenLabs
 DEFAULT_MODEL = "eleven_turbo_v2_5"  # unico da familia v2 que aceita language_code
@@ -33,6 +37,8 @@ DEFAULT_FORMAT = "mp3_44100_128"
 CHUNK_LIMIT = 2500  # caracteres por requisicao
 PAUSED_CHUNK_LIMIT = 1200  # com break tags: menos tags por geracao, menos instabilidade
 MAX_PAUSE = 3.0     # limite de <break time> aceito pela ElevenLabs
+MIN_SPEED = 0.7     # faixa de velocidade que a API aceita
+MAX_SPEED = 1.2
 
 
 # --------------------------------------------------------------------------- #
@@ -40,6 +46,26 @@ MAX_PAUSE = 3.0     # limite de <break time> aceito pela ElevenLabs
 # --------------------------------------------------------------------------- #
 def load_dotenv() -> None:
     config.carregar_env()
+
+
+def ler_velocidade(valor: str | float | None) -> float:
+    """Converte e valida a velocidade da fala, venha ela do .env ou da flag.
+
+    Fora da faixa a API responde 422 depois de o texto inteiro ter sido enviado,
+    e um valor que nao e numero rebentava com traceback: os dois viram aqui uma
+    linha dizendo o que corrigir.
+    """
+    if valor is None or valor == "":
+        return 1.0
+    try:
+        velocidade = float(valor)
+    except (TypeError, ValueError):
+        sys.exit(f"Velocidade invalida: {valor!r}. Use um numero entre "
+                 f"{MIN_SPEED} e {MAX_SPEED} (ELEVENLABS_SPEED ou --speed).")
+    if not MIN_SPEED <= velocidade <= MAX_SPEED:
+        sys.exit(f"Velocidade fora da faixa: {velocidade}. A API aceita de "
+                 f"{MIN_SPEED} a {MAX_SPEED} (ELEVENLABS_SPEED ou --speed).")
+    return velocidade
 
 
 def api_key() -> str:
@@ -211,50 +237,70 @@ def synthesize(text: str, voice: str, model: str, fmt: str, speed: float,
     return request(url, data=json.dumps(body).encode("utf-8"), method="POST")
 
 
-# --------------------------------------------------------------------------- #
-# reproducao
-# --------------------------------------------------------------------------- #
-PLAY_PS = """
-$ErrorActionPreference = 'Stop'
-Add-Type -AssemblyName presentationCore
-$player = New-Object System.Windows.Media.MediaPlayer
-$player.Open([uri]'{uri}')
-$deadline = (Get-Date).AddSeconds(15)
-while (-not $player.NaturalDuration.HasTimeSpan -and (Get-Date) -lt $deadline) {{
-    Start-Sleep -Milliseconds 100
-}}
-$player.Play()
-if ($player.NaturalDuration.HasTimeSpan) {{
-    Start-Sleep -Seconds ($player.NaturalDuration.TimeSpan.TotalSeconds + 0.6)
-}} else {{
-    Start-Sleep -Seconds 5
-}}
-$player.Stop()
-$player.Close()
-"""
+def resumo(texto: str, limite: int = 60) -> str:
+    """Como a narracao aparece no historico quando nao veio de um arquivo."""
+    uma_linha = " ".join(texto.split())
+    if len(uma_linha) <= limite:
+        return uma_linha
+    return uma_linha[:limite - 1].rstrip() + "…"
 
 
-def play(path: Path) -> None:
-    if sys.platform == "win32":
-        script = PLAY_PS.format(uri=path.resolve().as_uri())
-        done = subprocess.run(
-            ["powershell", "-NoProfile", "-NonInteractive", "-Command", script],
-            capture_output=True, text=True,
-        )
-        if done.returncode == 0:
-            return
-        print(f"[aviso] player embutido falhou: {done.stderr.strip()[:200]}", file=sys.stderr)
-        os.startfile(str(path))  # type: ignore[attr-defined]
-        return
+def assinatura(text: str, voice: str, model: str, fmt: str, speed: float,
+               language: str | None, prev: str | None, nxt: str | None) -> str:
+    """Identidade do trecho: tudo que muda o audio entra aqui.
 
-    for player in (["afplay"], ["mpv", "--no-video"], ["ffplay", "-nodisp", "-autoexit"]):
+    Os vizinhos entram truncados como a API os recebe, porque sao eles que
+    ajustam a prosodia na emenda: mudar o chunk anterior muda o audio deste.
+    """
+    partes = [text, voice, model, fmt, f"{speed}", language or "",
+              (prev or "")[-500:], (nxt or "")[:500]]
+    return hashlib.sha256("|".join(partes).encode("utf-8")).hexdigest()[:20]
+
+
+def sintetizar(text: str, voice: str, model: str, fmt: str, speed: float,
+               language: str | None, prev: str | None, nxt: str | None,
+               usar_cache: bool = True) -> tuple[bytes, bool]:
+    """A sintese com cache por conteudo. Devolve o audio e se ele veio do cache.
+
+    Reler o mesmo documento, ou repetir a leitura depois de trocar so o layout de
+    quem chama, nao gasta credito de novo. Cache que nao pode ser escrito nao
+    interrompe a narracao: o audio ja esta em maos.
+    """
+    if not usar_cache:
+        return synthesize(text, voice, model, fmt, speed, language, prev, nxt), False
+
+    chave = assinatura(text, voice, model, fmt, speed, language, prev, nxt)
+    destino = CACHE_DIR / f"{chave}.{'mp3' if fmt.startswith('mp3') else 'bin'}"
+    if destino.is_file():
         try:
-            subprocess.run(player + [str(path)], check=True,
-                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            return
-        except (FileNotFoundError, subprocess.CalledProcessError):
-            continue
-    print(f"[aviso] nenhum player encontrado; audio salvo em {path}", file=sys.stderr)
+            return destino.read_bytes(), True
+        except OSError:
+            pass
+
+    audio = synthesize(text, voice, model, fmt, speed, language, prev, nxt)
+    try:
+        CACHE_DIR.mkdir(parents=True, exist_ok=True)
+        destino.write_bytes(audio)
+    except OSError:
+        pass
+    return audio, False
+
+
+def emendar(partes: list[bytes], fmt: str) -> bytes:
+    """Junta os trechos num arquivo so, sem os cabecalhos que sobram no meio.
+
+    Cada resposta da API e um MP3 completo: tag ID3 e um frame Xing declarando a
+    duracao daquele trecho. Concatenados crus, o player le o Xing do primeiro e
+    acredita que o arquivo inteiro dura o que aquele trecho durava, recusando
+    seek adiante. Limpos, sem Xing nenhum, a duracao sai do tamanho e do bitrate,
+    que e constante aqui.
+
+    Trecho unico fica como veio: o Xing dele ja descreve o arquivo certo. Formato
+    que nao e MP3 tambem passa direto, porque a limpeza le frames de MP3.
+    """
+    if len(partes) == 1 or not fmt.startswith("mp3"):
+        return b"".join(partes)
+    return b"".join(mp3.limpar(parte) for parte in partes)
 
 
 # --------------------------------------------------------------------------- #
@@ -279,9 +325,9 @@ def main() -> None:
     parser.add_argument("--model", default=os.environ.get("ELEVENLABS_MODEL_ID", DEFAULT_MODEL))
     parser.add_argument("--format", dest="fmt", default=DEFAULT_FORMAT,
                         help=f"output_format da API (padrao {DEFAULT_FORMAT})")
-    parser.add_argument("--speed", type=float,
-                        default=float(os.environ.get("ELEVENLABS_SPEED", "1.0")),
-                        help="0.7 a 1.2; padrao: ELEVENLABS_SPEED")
+    parser.add_argument("--speed", type=ler_velocidade,
+                        default=ler_velocidade(os.environ.get("ELEVENLABS_SPEED")),
+                        help=f"{MIN_SPEED} a {MAX_SPEED}; padrao: ELEVENLABS_SPEED")
     parser.add_argument("--language", default=os.environ.get("ELEVENLABS_LANGUAGE"),
                         help="codigo ISO 639-1 (pt, en, es...) que forca o idioma; "
                              "ignorado pelo eleven_multilingual_v2")
@@ -291,7 +337,22 @@ def main() -> None:
                              "ELEVENLABS_SENTENCE_PAUSE)")
     parser.add_argument("--out", help="caminho do arquivo de audio gerado")
     parser.add_argument("--no-play", action="store_true", help="apenas gera o arquivo")
-    parser.add_argument("--keep", action="store_true", help="mantem o audio em out/ ao tocar")
+    parser.add_argument("--sem-historico", action="store_true",
+                        help="toca e apaga, sem deixar o audio no historico")
+    parser.add_argument("--controles", action=argparse.BooleanOptionalAction,
+                        default=None,
+                        help="teclado durante a reproducao (espaco pausa, setas "
+                             "pulam e mudam o volume, q encerra); o padrao e ligar "
+                             "so quando ha terminal")
+    parser.add_argument("--historico", nargs="?", type=int, const=20, default=None,
+                        metavar="N", help="lista as N ultimas narracoes (padrao 20)")
+    parser.add_argument("--replay", nargs="?", type=int, const=1, default=None,
+                        metavar="N", help="toca de novo a narracao N do historico "
+                                          "(1 = a ultima), sem chamar a API")
+    parser.add_argument("--parar", action="store_true",
+                        help="interrompe a narracao que estiver tocando agora")
+    parser.add_argument("--no-cache", action="store_true",
+                        help="sintetiza de novo mesmo que o trecho ja esteja em cache")
     parser.add_argument("--dry-run", action="store_true",
                         help="mostra o texto extraido e os chunks, sem chamar a API")
     parser.add_argument("--list-voices", action="store_true", help="lista as vozes da conta")
@@ -299,6 +360,28 @@ def main() -> None:
 
     if args.list_voices:
         list_voices()
+        return
+
+    if args.parar:
+        arquivo = tocador.parar()
+        print(f"Narracao interrompida: {arquivo.name}" if arquivo
+              else "Nada tocando agora.")
+        return
+
+    if args.historico is not None:
+        print(historico.formatar(historico.recentes(args.historico)))
+        return
+
+    if args.replay is not None:
+        anotado = historico.item(args.replay)
+        if not anotado:
+            sys.exit("Nao existe narracao com esse numero. "
+                     "Veja a lista com: speak.py --historico")
+        caminho = Path(anotado["arquivo"])
+        if not caminho.is_file():
+            sys.exit(f"O audio de {anotado['quando']} ja saiu do disco.")
+        print(f"{anotado['quando']}  {anotado['origem']}")
+        tocador.tocar(caminho, args.controles)
         return
 
     source = args.text if args.text is not None else args.source
@@ -334,41 +417,56 @@ def main() -> None:
 
     audio: list[bytes] = []
     for i, part in enumerate(spoken):
-        if len(spoken) > 1:
-            print(f"[{i + 1}/{len(spoken)}] sintetizando {len(part)} caracteres...",
-                  file=sys.stderr)
-        audio.append(synthesize(
+        trecho, do_cache = sintetizar(
             part, args.voice, args.model, args.fmt, args.speed, args.language,
             parts[i - 1] if i else None,
             parts[i + 1] if i + 1 < len(parts) else None,
-        ))
+            usar_cache=not args.no_cache,
+        )
+        if len(spoken) > 1:
+            origem = "do cache" if do_cache else "sintetizando"
+            print(f"[{i + 1}/{len(spoken)}] {origem}, {len(part)} caracteres...",
+                  file=sys.stderr)
+        audio.append(trecho)
 
     # o destino so e criado depois que tudo deu certo: erro da API nao
     # deixa arquivo vazio no disco
     src_path = Path(source) if len(source) < 260 else None
+    veio_de_arquivo = bool(src_path and src_path.is_file())
+    ext = "mp3" if args.fmt.startswith("mp3") else "bin"
+
     if args.out:
         target = Path(args.out)
-    elif args.no_play or args.keep:
-        stem = src_path.stem if src_path and src_path.is_file() else "fala"
-        ext = "mp3" if args.fmt.startswith("mp3") else "bin"
-        target = OUT_DIR / f"{stem}-{time.strftime('%Y%m%d-%H%M%S')}.{ext}"
-    else:
-        fd, tmp = tempfile.mkstemp(suffix=".mp3", prefix="speak-")
+    elif args.sem_historico:
+        fd, tmp = tempfile.mkstemp(suffix=f".{ext}", prefix="speak-")
         os.close(fd)
         target = Path(tmp)
+    else:
+        stem = src_path.stem if veio_de_arquivo else "fala"
+        target = OUT_DIR / f"{stem}-{time.strftime('%Y%m%d-%H%M%S')}.{ext}"
 
+    dados = emendar(audio, args.fmt)
     target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_bytes(b"".join(audio))
+    target.write_bytes(dados)
+
+    if not args.sem_historico:
+        historico.registrar(
+            target,
+            src_path.name if veio_de_arquivo else resumo(text),
+            len(text),
+            mp3.duracao(dados) if ext == "mp3" else 0.0,
+            args.voice, args.model, args.speed,
+        )
 
     if args.no_play:
         print(target)
         return
 
-    play(target)
-    if args.out or args.keep:
-        print(target)
-    else:
+    tocador.tocar(target, args.controles)
+    if args.sem_historico and not args.out:
         target.unlink(missing_ok=True)
+    else:
+        print(target)
 
 
 if __name__ == "__main__":

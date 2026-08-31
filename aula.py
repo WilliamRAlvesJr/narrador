@@ -191,7 +191,7 @@ def main() -> None:
     voice = os.environ.get("ELEVENLABS_VOICE_ID", speak.DEFAULT_VOICE)
     model = os.environ.get("ELEVENLABS_MODEL_ID", speak.DEFAULT_MODEL)
     language = os.environ.get("ELEVENLABS_LANGUAGE")
-    speed = float(os.environ.get("ELEVENLABS_SPEED", "1.0"))
+    speed = speak.ler_velocidade(os.environ.get("ELEVENLABS_SPEED"))
 
     caminho = Path(args.roteiro)
     titulo, subtitulo, slides = parse_roteiro(caminho)

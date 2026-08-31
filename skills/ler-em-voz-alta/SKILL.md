@@ -1,6 +1,6 @@
 ---
 name: ler-em-voz-alta
-description: Narra um texto em áudio com a voz do usuário na ElevenLabs. Use quando ele pedir para ler em voz alta, narrar, falar, escutar, ouvir, "me lê isso", "lê pra mim" ou "gera o áudio disso", seja de um arquivo .md/.txt/.html, de um trecho colado, ou de um resumo que você mesmo escreveu.
+description: Narra um texto em áudio com a voz do usuário na ElevenLabs, e controla o áudio já gerado. Use quando ele pedir para ler em voz alta, narrar, falar, escutar, ouvir, "me lê isso", "lê pra mim" ou "gera o áudio disso", seja de um arquivo .md/.txt/.html, de um trecho colado, ou de um resumo que você mesmo escreveu; e também quando ele disser "para o áudio", "cala a boca", "toca de novo", "repete o áudio" ou perguntar o que já foi narrado.
 user-invocable: true
 ---
 
@@ -24,6 +24,28 @@ apaga o temporário.
 
 O comando só retorna quando a narração termina: um `.md` de 2000 caracteres leva
 uns dois minutos. Chame com timeout folgado e não interrompa achando que travou.
+
+## Enquanto toca, e depois
+
+O áudio de cada narração fica guardado, então dá para atender a três pedidos sem
+gastar crédito nenhum:
+
+```powershell
+python "${CLAUDE_PLUGIN_ROOT}/speak.py" --parar        # corta o que está tocando
+python "${CLAUDE_PLUGIN_ROOT}/speak.py" --replay       # toca de novo a última
+python "${CLAUDE_PLUGIN_ROOT}/speak.py" --replay 3     # a terceira mais recente
+python "${CLAUDE_PLUGIN_ROOT}/speak.py" --historico    # lista as últimas narrações
+```
+
+**"Para", "chega", "cala a boca" durante uma narração é `--parar`**, e ele
+funciona mesmo que quem tenha começado o áudio tenha sido você, em outro turno.
+Rode antes de qualquer explicação: o usuário está falando por cima do som.
+
+Para tocar de novo, nunca sintetize outra vez o mesmo texto: `--replay` pega o
+arquivo do histórico. E quando ele pedir uma narração longa e quiser controlar a
+reprodução com o teclado, diga que isso existe rodando o comando no terminal
+dele, porque pela sessão não há teclado: espaço pausa, as setas pulam 5 s e
+mudam o volume, q encerra.
 
 ## Primeiro comando: cheque a configuração
 
@@ -74,7 +96,8 @@ a skill `video-aula` gera slides com diagramas sincronizados com a fala.
 | Ler um arquivo de prosa | `python "<raiz>/speak.py" docs/notas.md` |
 | Ler um texto seu, escrito na hora | `... /speak.py --text "o deploy terminou"` |
 | Ler algo longo, ou com aspas e acentos | salve num arquivo do scratchpad e passe o caminho |
-| Guardar o áudio | `... /speak.py notas.md --keep` (grava em `out/`) |
+| Guardar o áudio | já é o padrão: fica em `out/` e no histórico |
+| Narrar sem deixar arquivo | `... /speak.py notas.md --sem-historico` |
 | Só gerar, sem tocar | `... /speak.py notas.md --no-play --out saida.mp3` |
 | Ver o que será falado e a config | `... /speak.py notas.md --dry-run` |
 | Ver vozes da conta | `... /speak.py --list-voices` |
