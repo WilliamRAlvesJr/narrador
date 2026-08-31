@@ -1,0 +1,33 @@
+<svg viewBox="0 0 560 300" role="img" aria-label="Código no cache versionado do plugin, dados na pasta pessoal do usuário, com o config decidindo os caminhos" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5">
+  <g class="passo" data-passo="0">
+    <rect x="20" y="34" width="220" height="132" rx="6"/>
+    <text x="130" y="58" text-anchor="middle" font-size="13" fill="currentColor" stroke="none">cache do Claude Code</text>
+    <text x="130" y="78" text-anchor="middle" font-size="11.5" fill="currentColor" stroke="none" opacity=".72">narrador/1.5.0/</text>
+    <line x1="38" y1="94" x2="222" y2="94" opacity=".5"/>
+    <text x="130" y="118" text-anchor="middle" font-size="12" fill="currentColor" stroke="none">o código</text>
+    <text x="130" y="140" text-anchor="middle" font-size="11" fill="currentColor" stroke="none" opacity=".72">reescrito a cada versão</text>
+    <path d="M40 186 q90 -18 180 0" stroke-dasharray="4 4" opacity=".7"/>
+    <text x="130" y="204" text-anchor="middle" font-size="11" fill="currentColor" stroke="none" opacity=".8">descartável</text>
+  </g>
+
+  <g class="passo" data-passo="1">
+    <rect x="320" y="34" width="220" height="132" rx="6"/>
+    <text x="430" y="58" text-anchor="middle" font-size="13" fill="currentColor" stroke="none">~/.claude/narrador/</text>
+    <text x="430" y="78" text-anchor="middle" font-size="11.5" fill="currentColor" stroke="none" opacity=".72">a sua pasta</text>
+    <line x1="338" y1="94" x2="522" y2="94" opacity=".5"/>
+    <text x="430" y="116" text-anchor="middle" font-size="11.5" fill="currentColor" stroke="none">.env · out/ · cache-audio/</text>
+    <text x="430" y="138" text-anchor="middle" font-size="11.5" fill="currentColor" stroke="none">historico.jsonl</text>
+    <path d="M340 186 q90 -18 180 0" stroke-dasharray="4 4" opacity=".7"/>
+    <text x="430" y="204" text-anchor="middle" font-size="11" fill="currentColor" stroke="none" opacity=".8">permanente</text>
+  </g>
+
+  <g class="passo" data-passo="2">
+    <rect x="206" y="230" width="148" height="50" rx="5" stroke-width="2"/>
+    <text x="280" y="252" text-anchor="middle" font-size="13" fill="currentColor" stroke="none">config.py</text>
+    <text x="280" y="270" text-anchor="middle" font-size="11" fill="currentColor" stroke="none" opacity=".72">decide os caminhos</text>
+    <line x1="206" y1="248" x2="132" y2="214"/>
+    <polygon points="132,214 141,216 137,208" fill="currentColor" stroke="none"/>
+    <line x1="354" y1="248" x2="428" y2="214"/>
+    <polygon points="428,214 419,216 423,208" fill="currentColor" stroke="none"/>
+  </g>
+</svg>

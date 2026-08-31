@@ -1,0 +1,36 @@
+<svg viewBox="0 0 560 300" role="img" aria-label="O arquivo sentinela decide o hook, o texto impresso vale na sessão em curso e a barra roda de uma cópia estável" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5">
+  <g class="passo" data-passo="0">
+    <rect x="16" y="34" width="164" height="76" rx="5"/>
+    <text x="98" y="60" text-anchor="middle" font-size="12.5" fill="currentColor" stroke="none">narrar-respostas</text>
+    <text x="98" y="79" text-anchor="middle" font-size="10.5" fill="currentColor" stroke="none" opacity=".72">arquivo vazio</text>
+    <text x="98" y="98" text-anchor="middle" font-size="10.5" fill="currentColor" stroke="none" opacity=".72">existe ou não existe</text>
+    <line x1="180" y1="72" x2="228" y2="72"/>
+    <polygon points="228,72 220,67.5 220,76.5" fill="currentColor" stroke="none"/>
+    <rect x="228" y="42" width="150" height="60" rx="5"/>
+    <text x="303" y="68" text-anchor="middle" font-size="12" fill="currentColor" stroke="none">o hook fala</text>
+    <text x="303" y="87" text-anchor="middle" font-size="10.5" fill="currentColor" stroke="none" opacity=".72">ou sai calado</text>
+  </g>
+
+  <g class="passo" data-passo="1">
+    <rect x="16" y="140" width="362" height="76" rx="5"/>
+    <text x="197" y="164" text-anchor="middle" font-size="12.5" fill="currentColor" stroke="none">narrar.py on / off</text>
+    <line x1="36" y1="180" x2="358" y2="180" opacity=".5"/>
+    <text x="197" y="200" text-anchor="middle" font-size="10.5" fill="currentColor" stroke="none" opacity=".75">imprime a instrução que passa a valer agora</text>
+    <line x1="98" y1="110" x2="98" y2="140" stroke-dasharray="4 3"/>
+    <polygon points="98,140 93.5,132 102.5,132" fill="currentColor" stroke="none"/>
+  </g>
+
+  <g class="passo" data-passo="2">
+    <rect x="402" y="42" width="142" height="76" rx="5"/>
+    <text x="473" y="68" text-anchor="middle" font-size="12" fill="currentColor" stroke="none">statusline.py</text>
+    <text x="473" y="87" text-anchor="middle" font-size="10.5" fill="currentColor" stroke="none" opacity=".72">cópia fora do plugin</text>
+    <text x="473" y="105" text-anchor="middle" font-size="10.5" fill="currentColor" stroke="none" opacity=".72">caminho estável</text>
+    <line x1="473" y1="118" x2="473" y2="152"/>
+    <polygon points="473,152 468.5,144 477.5,144" fill="currentColor" stroke="none"/>
+    <rect x="402" y="152" width="142" height="40" rx="5" stroke-width="2"/>
+    <text x="473" y="177" text-anchor="middle" font-size="11.5" fill="currentColor" stroke="none">narrando / sem narrar</text>
+    <line x1="378" y1="178" x2="402" y2="172" opacity=".6" stroke-dasharray="3 3"/>
+  </g>
+
+  <text x="280" y="256" text-anchor="middle" font-size="11" fill="currentColor" stroke="none" opacity=".7">o hook age na abertura; o comando age na conversa</text>
+</svg>

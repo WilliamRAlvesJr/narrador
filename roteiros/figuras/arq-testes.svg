@@ -1,0 +1,29 @@
+<svg viewBox="0 0 560 300" role="img" aria-label="Os testes com a síntese falsa, os arquivos de apoio e o que dá para ignorar" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5">
+  <g class="passo" data-passo="0">
+    <rect x="16" y="26" width="250" height="94" rx="5" stroke-width="2"/>
+    <text x="141" y="52" text-anchor="middle" font-size="13" fill="currentColor" stroke="none">testes.py</text>
+    <text x="141" y="74" text-anchor="middle" font-size="11" fill="currentColor" stroke="none" opacity=".78">56 testes · 524 linhas</text>
+    <text x="141" y="94" text-anchor="middle" font-size="10.5" fill="currentColor" stroke="none" opacity=".72">sem rede, sem chave</text>
+    <text x="141" y="111" text-anchor="middle" font-size="10.5" fill="currentColor" stroke="none" opacity=".72">síntese trocada por uma falsa</text>
+  </g>
+
+  <g class="passo" data-passo="1">
+    <rect x="294" y="26" width="250" height="150" rx="5"/>
+    <text x="419" y="50" text-anchor="middle" font-size="12.5" fill="currentColor" stroke="none">apoio</text>
+    <rect x="310" y="62" width="218" height="22" rx="3" opacity=".8"/>
+    <text x="419" y="77" text-anchor="middle" font-size="10.5" fill="currentColor" stroke="none">.env.example</text>
+    <rect x="310" y="88" width="218" height="22" rx="3" opacity=".8"/>
+    <text x="419" y="103" text-anchor="middle" font-size="10.5" fill="currentColor" stroke="none">plugin.json · marketplace.json</text>
+    <rect x="310" y="114" width="218" height="22" rx="3" opacity=".8"/>
+    <text x="419" y="129" text-anchor="middle" font-size="10.5" fill="currentColor" stroke="none">README.md · CLAUDE.md</text>
+    <rect x="310" y="140" width="218" height="22" rx="3" opacity=".8"/>
+    <text x="419" y="155" text-anchor="middle" font-size="10.5" fill="currentColor" stroke="none">LICENSE</text>
+  </g>
+
+  <g class="passo" data-passo="2">
+    <rect x="16" y="204" width="528" height="72" rx="5" stroke-dasharray="5 4" opacity=".6"/>
+    <text x="280" y="228" text-anchor="middle" font-size="12" fill="currentColor" stroke="none" opacity=".85">dá para ignorar</text>
+    <text x="280" y="250" text-anchor="middle" font-size="10.5" fill="currentColor" stroke="none" opacity=".65">.gitignore · .gitattributes</text>
+    <text x="280" y="268" text-anchor="middle" font-size="10.5" fill="currentColor" stroke="none" opacity=".65">__pycache__/ · fora do controle de versão</text>
+  </g>
+</svg>

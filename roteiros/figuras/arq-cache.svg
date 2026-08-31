@@ -1,0 +1,48 @@
+<svg viewBox="0 0 560 300" role="img" aria-label="A assinatura decide entre cache e chamada à API, e cada trecho é limpo antes da emenda" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5">
+  <g class="passo" data-passo="0">
+    <rect x="16" y="26" width="150" height="66" rx="5"/>
+    <text x="91" y="50" text-anchor="middle" font-size="12.5" fill="currentColor" stroke="none">assinatura</text>
+    <text x="91" y="68" text-anchor="middle" font-size="10.5" fill="currentColor" stroke="none" opacity=".72">texto · voz · modelo</text>
+    <text x="91" y="84" text-anchor="middle" font-size="10.5" fill="currentColor" stroke="none" opacity=".72">velocidade · vizinhos</text>
+    <line x1="166" y1="59" x2="212" y2="59"/>
+    <polygon points="212,59 204,54.5 204,63.5" fill="currentColor" stroke="none"/>
+    <path d="M212 40 h84 l24 19 -24 19 h-84 l24 -19 z"/>
+    <text x="266" y="63" text-anchor="middle" font-size="11.5" fill="currentColor" stroke="none">já existe?</text>
+    <line x1="320" y1="52" x2="386" y2="34"/>
+    <polygon points="386,34 377,34 380,42" fill="currentColor" stroke="none"/>
+    <text x="352" y="28" text-anchor="middle" font-size="10.5" fill="currentColor" stroke="none" opacity=".8">sim</text>
+    <rect x="386" y="18" width="158" height="34" rx="4"/>
+    <text x="465" y="40" text-anchor="middle" font-size="11.5" fill="currentColor" stroke="none">reaproveita, custo zero</text>
+    <line x1="320" y1="70" x2="386" y2="88"/>
+    <polygon points="386,88 377,88 380,80" fill="currentColor" stroke="none"/>
+    <text x="352" y="98" text-anchor="middle" font-size="10.5" fill="currentColor" stroke="none" opacity=".8">não</text>
+    <rect x="386" y="70" width="158" height="34" rx="4" stroke-dasharray="4 3"/>
+    <text x="465" y="92" text-anchor="middle" font-size="11.5" fill="currentColor" stroke="none">chama a API e guarda</text>
+  </g>
+
+  <g class="passo" data-passo="1">
+    <rect x="30" y="140" width="118" height="64" rx="4"/>
+    <rect x="30" y="140" width="118" height="18" rx="4" opacity=".55"/>
+    <text x="89" y="154" text-anchor="middle" font-size="9.5" fill="currentColor" stroke="none" opacity=".8">ID3 + Xing</text>
+    <text x="89" y="182" text-anchor="middle" font-size="11.5" fill="currentColor" stroke="none">trecho 1</text>
+    <rect x="164" y="140" width="118" height="64" rx="4"/>
+    <rect x="164" y="140" width="118" height="18" rx="4" opacity=".55"/>
+    <text x="223" y="154" text-anchor="middle" font-size="9.5" fill="currentColor" stroke="none" opacity=".8">ID3 + Xing</text>
+    <text x="223" y="182" text-anchor="middle" font-size="11.5" fill="currentColor" stroke="none">trecho 2</text>
+    <rect x="298" y="140" width="118" height="64" rx="4"/>
+    <rect x="298" y="140" width="118" height="18" rx="4" opacity=".55"/>
+    <text x="357" y="154" text-anchor="middle" font-size="9.5" fill="currentColor" stroke="none" opacity=".8">ID3 + Xing</text>
+    <text x="357" y="182" text-anchor="middle" font-size="11.5" fill="currentColor" stroke="none">trecho 3</text>
+    <text x="470" y="176" text-anchor="middle" font-size="11.5" fill="currentColor" stroke="none" opacity=".8">cada um se diz</text>
+    <text x="470" y="192" text-anchor="middle" font-size="11.5" fill="currentColor" stroke="none" opacity=".8">um arquivo inteiro</text>
+  </g>
+
+  <g class="passo" data-passo="2">
+    <line x1="223" y1="206" x2="223" y2="234"/>
+    <polygon points="223,234 218.5,226 227.5,226" fill="currentColor" stroke="none"/>
+    <text x="250" y="224" font-size="11" fill="currentColor" stroke="none" opacity=".8">mp3.limpar</text>
+    <rect x="30" y="234" width="386" height="46" rx="4" stroke-width="2"/>
+    <text x="223" y="262" text-anchor="middle" font-size="12.5" fill="currentColor" stroke="none">um arquivo só, com seek até o fim</text>
+    <text x="470" y="262" text-anchor="middle" font-size="11" fill="currentColor" stroke="none" opacity=".8">duração por frames</text>
+  </g>
+</svg>

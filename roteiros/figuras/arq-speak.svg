@@ -1,0 +1,47 @@
+<svg viewBox="0 0 560 300" role="img" aria-label="O speak como módulo central: pipeline de extração até a síntese, e as chamadas aos outros módulos" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5">
+  <g class="passo" data-passo="0">
+    <rect x="186" y="20" width="188" height="52" rx="6" stroke-width="2"/>
+    <text x="280" y="43" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">speak.py</text>
+    <text x="280" y="61" text-anchor="middle" font-size="11" fill="currentColor" stroke="none" opacity=".72">453 linhas · a CLI</text>
+  </g>
+
+  <g class="passo" data-passo="1">
+    <line x1="280" y1="72" x2="280" y2="98"/>
+    <polygon points="280,98 275.5,90 284.5,90" fill="currentColor" stroke="none"/>
+    <rect x="18" y="98" width="112" height="48" rx="5"/>
+    <text x="74" y="120" text-anchor="middle" font-size="12" fill="currentColor" stroke="none">extrai</text>
+    <text x="74" y="137" text-anchor="middle" font-size="10.5" fill="currentColor" stroke="none" opacity=".72">md · html · txt</text>
+    <line x1="130" y1="122" x2="160" y2="122"/>
+    <polygon points="160,122 152,117.5 152,126.5" fill="currentColor" stroke="none"/>
+    <rect x="160" y="98" width="112" height="48" rx="5"/>
+    <text x="216" y="120" text-anchor="middle" font-size="12" fill="currentColor" stroke="none">corta</text>
+    <text x="216" y="137" text-anchor="middle" font-size="10.5" fill="currentColor" stroke="none" opacity=".72">fim de frase</text>
+    <line x1="272" y1="122" x2="302" y2="122"/>
+    <polygon points="302,122 294,117.5 294,126.5" fill="currentColor" stroke="none"/>
+    <rect x="302" y="98" width="112" height="48" rx="5"/>
+    <text x="358" y="120" text-anchor="middle" font-size="12" fill="currentColor" stroke="none">pausa</text>
+    <text x="358" y="137" text-anchor="middle" font-size="10.5" fill="currentColor" stroke="none" opacity=".72">depois do corte</text>
+    <line x1="414" y1="122" x2="444" y2="122"/>
+    <polygon points="444,122 436,117.5 436,126.5" fill="currentColor" stroke="none"/>
+    <rect x="444" y="98" width="98" height="48" rx="5"/>
+    <text x="493" y="120" text-anchor="middle" font-size="12" fill="currentColor" stroke="none">sintetiza</text>
+    <text x="493" y="137" text-anchor="middle" font-size="10.5" fill="currentColor" stroke="none" opacity=".72">com vizinhos</text>
+  </g>
+
+  <g class="passo" data-passo="2">
+    <line x1="280" y1="146" x2="280" y2="182"/>
+    <polygon points="280,182 275.5,174 284.5,174" fill="currentColor" stroke="none"/>
+    <text x="300" y="168" font-size="11" fill="currentColor" stroke="none" opacity=".8">chama</text>
+    <rect x="42" y="200" width="132" height="58" rx="5"/>
+    <text x="108" y="225" text-anchor="middle" font-size="12" fill="currentColor" stroke="none">mp3.py</text>
+    <text x="108" y="243" text-anchor="middle" font-size="10.5" fill="currentColor" stroke="none" opacity=".72">emenda</text>
+    <rect x="214" y="200" width="132" height="58" rx="5"/>
+    <text x="280" y="225" text-anchor="middle" font-size="12" fill="currentColor" stroke="none">tocador.py</text>
+    <text x="280" y="243" text-anchor="middle" font-size="10.5" fill="currentColor" stroke="none" opacity=".72">reproduz</text>
+    <rect x="386" y="200" width="132" height="58" rx="5"/>
+    <text x="452" y="225" text-anchor="middle" font-size="12" fill="currentColor" stroke="none">historico.py</text>
+    <text x="452" y="243" text-anchor="middle" font-size="10.5" fill="currentColor" stroke="none" opacity=".72">anota</text>
+    <line x1="266" y1="184" x2="120" y2="200" opacity=".8"/>
+    <line x1="294" y1="184" x2="440" y2="200" opacity=".8"/>
+  </g>
+</svg>

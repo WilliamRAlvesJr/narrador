@@ -1,0 +1,35 @@
+<svg viewBox="0 0 560 300" role="img" aria-label="Dois caminhos de reprodução e o histórico que se poda" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5">
+  <rect x="212" y="18" width="136" height="42" rx="5"/>
+  <text x="280" y="44" text-anchor="middle" font-size="12.5" fill="currentColor" stroke="none">áudio pronto</text>
+
+  <g class="passo" data-passo="0">
+    <line x1="248" y1="60" x2="150" y2="94"/>
+    <polygon points="150,94 159,93 155,86" fill="currentColor" stroke="none"/>
+    <text x="176" y="80" text-anchor="middle" font-size="10.5" fill="currentColor" stroke="none" opacity=".8">tocar</text>
+    <rect x="18" y="94" width="230" height="72" rx="5"/>
+    <text x="133" y="118" text-anchor="middle" font-size="12.5" fill="currentColor" stroke="none">player embutido</text>
+    <text x="133" y="137" text-anchor="middle" font-size="10.5" fill="currentColor" stroke="none" opacity=".72">abre, espera o fim, fecha</text>
+    <text x="133" y="155" text-anchor="middle" font-size="10.5" fill="currentColor" stroke="none" opacity=".72">tarefa em segundo plano corta o som</text>
+  </g>
+
+  <g class="passo" data-passo="1">
+    <line x1="312" y1="60" x2="410" y2="94"/>
+    <polygon points="410,94 401,93 405,86" fill="currentColor" stroke="none"/>
+    <text x="390" y="80" text-anchor="middle" font-size="10.5" fill="currentColor" stroke="none" opacity=".8">abrir</text>
+    <rect x="312" y="94" width="230" height="72" rx="5"/>
+    <text x="427" y="118" text-anchor="middle" font-size="12.5" fill="currentColor" stroke="none">programa do sistema</text>
+    <circle cx="372" cy="142" r="9"/>
+    <polygon points="369,137 379,142 369,147" fill="currentColor" stroke="none"/>
+    <line x1="392" y1="142" x2="524" y2="142" opacity=".7"/>
+    <circle cx="440" cy="142" r="4" fill="currentColor"/>
+  </g>
+
+  <g class="passo" data-passo="2">
+    <rect x="90" y="196" width="380" height="88" rx="5"/>
+    <text x="280" y="219" text-anchor="middle" font-size="12.5" fill="currentColor" stroke="none">historico.jsonl</text>
+    <line x1="110" y1="236" x2="450" y2="236" opacity=".55"/>
+    <line x1="110" y1="252" x2="450" y2="252" opacity=".55"/>
+    <line x1="110" y1="268" x2="360" y2="268" opacity=".3" stroke-dasharray="4 3"/>
+    <text x="280" y="288" text-anchor="middle" font-size="10.5" fill="currentColor" stroke="none" opacity=".72">50 narrações; as antigas saem e o áudio é apagado</text>
+  </g>
+</svg>

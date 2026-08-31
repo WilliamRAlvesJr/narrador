@@ -1,7 +1,7 @@
 {
   "name": "narrador",
   "description": "Lê seus arquivos em voz alta, guarda cada narração para ouvir de novo, e transforma um assunto em vídeo-aula: slides e diagramas que acendem no instante exato da fala. Voz pela ElevenLabs.",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "author": {
     "name": "William Alves"
   },
