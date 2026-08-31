@@ -82,6 +82,9 @@ def ligar() -> int:
         return 1
 
     print("Narracao automatica LIGADA.")
+    sugestao = config.sugestao_da_statusline()
+    if sugestao:
+        print(sugestao)
     print(instrucao())
     return 0
 

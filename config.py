@@ -7,7 +7,9 @@ cache vao para a pasta de dados, fora do plugin.
 
 from __future__ import annotations
 
+import json
 import os
+import sys
 from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parent
@@ -108,6 +110,41 @@ def sincronizar_statusline() -> Path | None:
     return destino
 
 
+SETTINGS = ("settings.json", "settings.local.json")
+
+
+def statusline_configurada() -> bool:
+    """A barra do usuario ja chama o statusline.py?"""
+    pasta = Path.home() / ".claude"
+    for nome in SETTINGS:
+        try:
+            dados = json.loads((pasta / nome).read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        comando = (dados.get("statusLine") or {}).get("command")
+        if isinstance(comando, str) and "statusline.py" in comando:
+            return True
+    return False
+
+
+def sugestao_da_statusline() -> str | None:
+    """O trecho para colar no settings, ou None se a barra ja aponta para ca.
+
+    Sugestao, nunca escrita: a barra e uma so, e o plugin nao apaga a que o
+    usuario ja usa. O caminho e o da copia na pasta de dados, porque o do plugin
+    leva a versao no nome.
+    """
+    if statusline_configurada():
+        return None
+    comando = f'"{sys.executable}" "{DADOS / "statusline.py"}"'
+    trecho = json.dumps({"type": "command", "command": comando}, ensure_ascii=False)
+    destino = Path.home() / ".claude" / "settings.json"
+    return (
+        f"Barra de estado: para ver se a narracao esta ligada, junte ao {destino}\n"
+        f'  "statusLine": {trecho}'
+    )
+
+
 # --------------------------------------------------------------------------- #
 # checagem, rodada antes de escrever qualquer roteiro
 # --------------------------------------------------------------------------- #
@@ -144,6 +181,4 @@ def checar() -> int:
 
 
 if __name__ == "__main__":
-    import sys
-
     sys.exit(checar())

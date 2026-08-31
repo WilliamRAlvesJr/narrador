@@ -34,7 +34,7 @@ ou a raiz derivada do "Base directory for this skill".
 | `hooks/semear_env.py` | hook `SessionStart`: semeia o `.env` e atualiza a cópia do `statusline.py` |
 | `hooks/narrar_respostas.py` | hook `SessionStart`: manda narrar um roteiro de cada resposta, ligado pelo arquivo sentinela |
 
-Rode `python3 testes.py` antes de commitar: 58 testes, alguns segundos, nenhuma
+Rode `python3 testes.py` antes de commitar: 61 testes, alguns segundos, nenhuma
 chamada à API.
 
 ## Quem manda no áudio
@@ -80,6 +80,10 @@ chamada à API.
   roteiro falado é o Claude. Nenhum hook deste plugin sintetiza texto que ninguém
   reescreveu para o ouvido, senão caminho de arquivo e nome de variável viram
   áudio.
+- **O settings do usuário é dele.** A barra de estado é uma só, e um plugin de
+  narração não apaga a que já está lá: `config.sugestao_da_statusline` monta o
+  trecho com o interpretador em uso e o caminho da cópia, `narrar.py on`
+  imprime enquanto a barra não aponta para cá, e quem cola é o usuário.
 - **Caminho do plugin no settings do usuário.** A pasta do cache leva a versão no
   nome, então caminho anotado fora do plugin morre na atualização seguinte. A
   barra de estado aponta para a cópia em `~/.claude/narrador/`, que o hook

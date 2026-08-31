@@ -335,8 +335,11 @@ class TestEnv(unittest.TestCase):
 class TestInterruptor(unittest.TestCase):
     """narrar.py de ponta a ponta, com a pasta de dados em lugar temporario."""
 
-    def rodar(self, *argumentos, pasta, chave="sk-de-mentira"):
+    def rodar(self, *argumentos, pasta, chave="sk-de-mentira", casa=None):
         ambiente = dict(os.environ, NARRADOR_HOME=pasta, ELEVENLABS_API_KEY=chave)
+        if casa:
+            # os dois nomes: Path.home() le USERPROFILE no Windows e HOME no resto
+            ambiente.update(HOME=casa, USERPROFILE=casa)
         return subprocess.run(
             [sys.executable, str(RAIZ / "narrar.py"), *argumentos],
             capture_output=True, text=True, encoding="utf-8", env=ambiente,
@@ -375,6 +378,35 @@ class TestInterruptor(unittest.TestCase):
             saida = self.rodar("talvez", pasta=pasta)
             self.assertEqual(saida.returncode, 2)
             self.assertIn("desconhecido", saida.stderr)
+
+    def barra(self, casa: str, comando: str) -> None:
+        settings = Path(casa) / ".claude"
+        settings.mkdir(parents=True, exist_ok=True)
+        (settings / "settings.json").write_text(
+            json.dumps({"statusLine": {"type": "command", "command": comando}}),
+            encoding="utf-8",
+        )
+
+    def test_ligar_sugere_a_barra_de_estado(self):
+        """Sugestao, nunca escrita: o settings do usuario e dele."""
+        with tempfile.TemporaryDirectory() as pasta, \
+                tempfile.TemporaryDirectory() as casa:
+            saida = self.rodar("on", pasta=pasta, casa=casa)
+            self.assertIn("statusLine", saida.stdout)
+            self.assertIn("statusline.py", saida.stdout)
+            self.assertFalse((Path(casa) / ".claude" / "settings.json").exists())
+
+    def test_barra_ja_configurada_nao_vira_ruido(self):
+        with tempfile.TemporaryDirectory() as pasta, \
+                tempfile.TemporaryDirectory() as casa:
+            self.barra(casa, 'python "/qualquer/lugar/statusline.py"')
+            self.assertNotIn("statusLine", self.rodar("on", pasta=pasta, casa=casa).stdout)
+
+    def test_outra_barra_ainda_recebe_a_sugestao(self):
+        with tempfile.TemporaryDirectory() as pasta, \
+                tempfile.TemporaryDirectory() as casa:
+            self.barra(casa, "meu-script-de-barra")
+            self.assertIn("statusLine", self.rodar("on", pasta=pasta, casa=casa).stdout)
 
     def test_ligar_imprime_a_instrucao_com_o_caminho_do_speak(self):
         """Ligar num comando so: a confirmacao e as regras saem juntas."""

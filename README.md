@@ -105,8 +105,11 @@ Para ver o estado o tempo todo, aponte a barra do Claude Code para o
 ```
 
 No Windows, `"command": "python \"C:/Users/voce/.claude/narrador/statusline.py\""`.
-Troque pelo caminho da sua pasta de dados, escrito por extenso: `python3 narrar.py`
-imprime onde ela fica. Nada de `~` aí, que nem todo shell expande.
+Nada de `~` aí, que nem todo shell expande: o caminho vai por extenso.
+
+Não precisa montar isso à mão. Enquanto a barra não apontar para cá, `narrar.py
+on` imprime o trecho já com o seu interpretador e o seu caminho, pronto para
+colar. Quem cola é você: a barra é uma só, e o plugin não apaga a que você já usa.
 
 A barra mostra a pasta, o modelo e `🔊 narrando` ou `🔇 sem narrar`. O arquivo
 apontado é a cópia na pasta de dados, que o hook reescreve quando o plugin muda:
@@ -193,7 +196,7 @@ então ajustar figura ou layout e regerar não consome créditos.
 python3 testes.py
 ```
 
-São 58, só stdlib, sem rede e sem chave: a síntese é substituída por uma função
+São 61, só stdlib, sem rede e sem chave: a síntese é substituída por uma função
 de mentira e o MP3 dos testes é montado frame a frame. Cobrem extração,
 chunking, pausas, emenda, cache, velocidade, histórico, roteiro da aula, leitura
 do `.env`, o interruptor e a barra de estado.

@@ -31,6 +31,11 @@ antiga ainda esteja no seu contexto.
 Ligar sem a chave da ElevenLabs não liga nada, e a saída diz o que falta; repasse
 essa linha e pare por aí.
 
+Quando a saída trouxer a sugestão da barra de estado, repasse o trecho
+`"statusLine"` inteiro, uma vez só, depois da linha do estado: a barra é do
+usuário, e nem a skill nem o script escrevem no `settings.json` dele. Sem essa
+sugestão na saída, não fale da barra.
+
 ## Sem estado explícito no pedido
 
 Só então ofereça a escolha com `AskUserQuestion`, duas opções, a atual em
@@ -40,4 +45,5 @@ estado com o comando sem argumento antes de perguntar.
 
 ## O que dizer ao usuário
 
-Uma linha: o novo estado, e que vale já nesta sessão. Nada além disso.
+Uma linha: o novo estado, e que vale já nesta sessão. Nada além disso, fora a
+sugestão da barra quando ela vier na saída.
