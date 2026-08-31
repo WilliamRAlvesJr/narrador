@@ -34,7 +34,7 @@ ou a raiz derivada do "Base directory for this skill".
 | `hooks/semear_env.py` | hook `SessionStart`: semeia o `.env` e atualiza a cópia do `statusline.py` |
 | `hooks/narrar_respostas.py` | hook `SessionStart`: manda narrar um roteiro de cada resposta, ligado pelo arquivo sentinela |
 
-Rode `python3 testes.py` antes de commitar: 78 testes, alguns segundos, nenhuma
+Rode `python3 testes.py` antes de commitar: 71 testes, alguns segundos, nenhuma
 chamada à API.
 
 ## Quem manda no áudio
@@ -47,10 +47,6 @@ chamada à API.
   mais o som. Silêncio calado é o pior desfecho: cada saída sem áudio (sem
   `xdg-open`, sem programa associado, sessão sem tela) sai com o aviso que diz o
   que fazer, e `abrir_no_sistema` devolve `False` para quem chamou.
-- **Volume é do player, nunca da síntese.** `NARRADOR_VOLUME` entra como flag
-  de quem toca, cada um na sua escala (`VOLUME_UNIX`), e como `$player.Volume`
-  no Windows. Mexer no áudio gerado mudaria a chave do cache e faria pagar de
-  novo pelo mesmo texto. Valor torto avisa e toca cheio: o áudio já foi pago.
 - **A reprodução com controles é a do sistema.** `--abrir` entrega o arquivo do
   histórico ao programa de áudio do computador e retorna na hora; pausa, barra e
   volume são de lá.

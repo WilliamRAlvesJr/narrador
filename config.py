@@ -154,7 +154,6 @@ CAMPOS = [
     ("ELEVENLABS_LANGUAGE", "idioma"),
     ("ELEVENLABS_SPEED", "velocidade"),
     ("ELEVENLABS_SENTENCE_PAUSE", "pausa"),
-    ("NARRADOR_VOLUME", "volume"),
 ]
 
 
