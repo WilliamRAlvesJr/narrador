@@ -49,16 +49,21 @@ com o áudio embutido, pronta para publicar.
 substância, o Claude escreve um roteiro falado dela e narra o roteiro, do mesmo
 jeito que faria com um documento.
 
+Peça em voz corrente ("liga a narração automática", "para de narrar"), ou chame
+**`/narrador:narrar-respostas`**. Fora do Claude, o mesmo interruptor:
+
 ```
-narrar.cmd on     liga
-narrar.cmd off    desliga
-narrar.cmd        mostra o estado
+python narrar.py on     liga
+python narrar.py off    desliga
+python narrar.py        mostra o estado e onde fica a sentinela
 ```
 
 O gatilho é o arquivo `~/.claude/narrador/narrar-respostas`: quando ele existe, o
 hook `SessionStart` injeta a instrução; sem ele, sai calado. Como a leitura é no
-começo da sessão, ligar ou desligar vale a partir da próxima. Confirmação curta e
-resposta de uma linha não viram áudio, e cada narração consome créditos.
+começo da sessão, o arquivo sozinho só valeria na próxima: por isso ligar e
+desligar imprimem também a instrução que vale agora, e a skill manda o Claude
+segui-la. Confirmação curta e resposta de uma linha não viram áudio, e cada
+narração consome créditos.
 
 ## Uso direto, sem o Claude
 
@@ -133,6 +138,7 @@ ajustar figura ou layout e regerar não consome créditos.
 | `aula.py`, `aula_template.html` | vídeo-aula com slides sincronizados |
 | `mp3.py` | limpeza e medição dos trechos de áudio |
 | `config.py` | onde ficam chave, saída e cache, e a checagem da configuração |
+| `narrar.py` | liga e desliga a narração automática |
 | `hooks/` | dois `SessionStart`: um semeia o `.env`, o outro liga a narração automática |
-| `skills/` | as duas skills que o Claude carrega |
+| `skills/` | as três skills que o Claude carrega |
 | `roteiros/` | a aula sobre o próprio plugin, e as figuras de referência |

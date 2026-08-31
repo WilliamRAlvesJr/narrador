@@ -1,8 +1,9 @@
 # narrador: código do plugin
 
 Este arquivo é para quem mexe no plugin. As instruções de uso ficam nas skills
-`skills/ler-em-voz-alta` e `skills/video-aula`, que o Claude carrega quando o
-usuário pede uma narração ou uma aula.
+`skills/ler-em-voz-alta`, `skills/video-aula` e `skills/narrar-respostas`, que o
+Claude carrega quando o usuário pede uma narração, uma aula, ou liga e desliga a
+narração automática.
 
 ## Nada de estado dentro do plugin
 
@@ -24,6 +25,7 @@ ou a raiz derivada do "Base directory for this skill".
 | `aula_template.html` | layout e player da aula |
 | `mp3.py` | limpeza de ID3/Xing e duração por contagem de frames |
 | `config.py` | pasta de dados, `.env`, saída e cache; `python config.py` checa a configuração |
+| `narrar.py` | interruptor da narração automática: sentinela, e o texto da instrução que o hook e a skill injetam |
 | `hooks/narrar_respostas.py` | hook `SessionStart`: manda narrar um roteiro de cada resposta, ligado pelo arquivo sentinela |
 | `hooks/semear_env.py` | hook `SessionStart`: copia o `.env.example` para a pasta de dados na primeira vez |
 
@@ -37,6 +39,11 @@ ou a raiz derivada do "Base directory for this skill".
 - **ID3 e frame Xing na emenda.** Cada resposta da API é um MP3 completo; sem
   `mp3.limpar` o player adota o Xing do primeiro trecho como duração do arquivo e
   recusa seek adiante. `aula.py` avisa quando a emenda medida diverge da soma.
+- **Ligar a narração sem valer na sessão.** A instrução entra pelo
+  `SessionStart`: criar a sentinela no meio da sessão não muda nada, e apagá-la
+  não revoga o que já está no contexto. Quem liga ou desliga precisa imprimir
+  também o texto que vale agora, que é o que `narrar.py --instrucao` e a saída
+  do `off` fazem.
 - **Narrar a resposta crua.** A narração automática já foi um hook `Stop` que
   mandava a resposta pronta para a API: sem modelo no caminho, caminho de arquivo
   e nome de variável iam para o áudio como estão. Hoje o hook só injeta a
