@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
-"""Hook SessionStart: deixa o .env pronto na pasta de dados do usuario.
+"""Hook SessionStart: deixa a pasta de dados do usuario pronta.
 
 O Claude Code nao roda nada no /plugin install, entao a primeira sessao depois
 da instalacao e o momento mais cedo em que o plugin consegue agir. Copia o
 .env.example para ~/.claude/narrador/.env quando ainda nao existe nenhum, e
 avisa o Claude para pedir a chave. Sem nada a fazer, sai calado: o stdout do
 hook entra no contexto da sessao.
+
+Tambem atualiza a copia do statusline.py, que a barra de estado do usuario
+executa por um caminho estavel, fora do cache versionado do plugin. Isso e
+sempre silencioso: quem nao configurou a barra nao precisa saber.
 """
 
 from __future__ import annotations
@@ -19,6 +23,7 @@ import config  # noqa: E402
 
 
 def main() -> None:
+    config.sincronizar_statusline()
     criado = config.semear_env()
     if not criado:
         return

@@ -26,6 +26,7 @@ ou a raiz derivada do "Base directory for this skill".
 | `mp3.py` | limpeza de ID3/Xing e duração por contagem de frames |
 | `config.py` | pasta de dados, `.env`, saída e cache; `python config.py` checa a configuração |
 | `narrar.py` | interruptor da narração automática: sentinela, e o texto da instrução que o hook e a skill injetam |
+| `statusline.py` | barra de estado do Claude Code; autocontido, roda da cópia em `~/.claude/narrador/` |
 | `hooks/narrar_respostas.py` | hook `SessionStart`: manda narrar um roteiro de cada resposta, ligado pelo arquivo sentinela |
 | `hooks/semear_env.py` | hook `SessionStart`: copia o `.env.example` para a pasta de dados na primeira vez |
 
@@ -49,6 +50,11 @@ ou a raiz derivada do "Base directory for this skill".
   e nome de variável iam para o áudio como estão. Hoje o hook só injeta a
   instrução; quem escreve o roteiro é o Claude. Nenhum hook deste plugin deve
   voltar a sintetizar texto que ninguém reescreveu para o ouvido.
+- **Caminho do plugin no settings do usuário.** A pasta do cache leva a versão
+  no nome, então qualquer caminho anotado fora do plugin morre na atualização
+  seguinte. Por isso a barra de estado aponta para a cópia em
+  `~/.claude/narrador/`, que o hook reescreve quando o plugin muda, e o
+  `statusline.py` é autocontido: rodando de lá, ele não tem o `config.py` ao lado.
 - **Break tags desalinham a aula.** Ritmo na vídeo-aula é controle do player
   (velocidade, pausa, volume), nunca da gravação.
 - **Chave vazia no `.env`.** O arquivo semeado vem com `ELEVENLABS_API_KEY=`

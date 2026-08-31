@@ -58,6 +58,24 @@ python narrar.py off    desliga
 python narrar.py        mostra o estado e onde fica a sentinela
 ```
 
+Para ver o estado o tempo todo, aponte a barra do Claude Code para o
+`statusline.py`, no seu `~/.claude/settings.json`:
+
+```json
+"statusLine": {
+  "type": "command",
+  "command": "python \"C:/Users/voce/.claude/narrador/statusline.py\""
+}
+```
+
+Troque pelo caminho da sua pasta de dados, escrito por extenso: `python narrar.py`
+imprime onde ela fica. Nada de `~` aí, que nem todo shell expande.
+
+A barra passa a mostrar a pasta, o modelo e `🔊 narrando` ou `🔇 sem narrar`. O
+arquivo apontado é a cópia na pasta de dados, que o hook reescreve quando o plugin
+muda: apontar para dentro do plugin quebraria a barra na versão seguinte, porque a
+pasta do cache leva o número da versão no nome.
+
 O gatilho é o arquivo `~/.claude/narrador/narrar-respostas`: quando ele existe, o
 hook `SessionStart` injeta a instrução; sem ele, sai calado. Como a leitura é no
 começo da sessão, o arquivo sozinho só valeria na próxima: por isso ligar e
@@ -139,6 +157,7 @@ ajustar figura ou layout e regerar não consome créditos.
 | `mp3.py` | limpeza e medição dos trechos de áudio |
 | `config.py` | onde ficam chave, saída e cache, e a checagem da configuração |
 | `narrar.py` | liga e desliga a narração automática |
+| `statusline.py` | a barra de estado: pasta, modelo e se a narração está ligada |
 | `hooks/` | dois `SessionStart`: um semeia o `.env`, o outro liga a narração automática |
 | `skills/` | as três skills que o Claude carrega |
 | `roteiros/` | a aula sobre o próprio plugin, e as figuras de referência |

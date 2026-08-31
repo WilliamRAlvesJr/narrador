@@ -16,6 +16,19 @@ estiver no ambiente do seu shell, a raiz é o diretório dois níveis acima do
 "Base directory for this skill" mostrado no topo desta skill. Cite o caminho
 entre aspas: em algumas instalações ele contém espaços.
 
+## Sem instrução explícita: mostre o seletor
+
+Se o usuário não disse qual estado quer ("liga", "desliga"), não adivinhe nem
+pergunte em texto corrido. Leia o estado atual e ofereça a escolha com a
+ferramenta `AskUserQuestion`, duas opções, a atual em primeiro lugar:
+
+- **Ligada**: o Claude narra um roteiro falado de cada resposta de substância
+- **Desligada**: só narra quando você pedir
+
+Rotule a opção vigente com "(atual)" na descrição, para ele ver onde está antes
+de escolher. Depois aplique a escolha pelos passos abaixo. Se a escolha for a
+que já vale, diga isso em uma linha e não rode nada.
+
 ## Ligar
 
 ```powershell

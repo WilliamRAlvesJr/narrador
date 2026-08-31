@@ -89,6 +89,32 @@ def semear_env() -> Path | None:
     return destino
 
 
+STATUSLINE = RAIZ / "statusline.py"
+
+
+def sincronizar_statusline() -> Path | None:
+    """Mantem uma copia do statusline.py na pasta de dados.
+
+    A barra de estado guarda o caminho do comando no settings.json do usuario, e
+    o caminho do plugin no cache leva a versao no nome: apontar para la quebraria
+    a barra a cada atualizacao. A copia mora num caminho estavel e e reescrita
+    quando o plugin muda. Devolve o destino quando escreveu, senao None.
+    """
+    destino = DADOS / "statusline.py"
+    try:
+        conteudo = STATUSLINE.read_bytes()
+    except OSError:
+        return None
+    try:
+        if destino.is_file() and destino.read_bytes() == conteudo:
+            return None
+        DADOS.mkdir(parents=True, exist_ok=True)
+        destino.write_bytes(conteudo)
+    except OSError:
+        return None
+    return destino
+
+
 # --------------------------------------------------------------------------- #
 # checagem, chamada pelas skills antes de escrever o roteiro
 # --------------------------------------------------------------------------- #
